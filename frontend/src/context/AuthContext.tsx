@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { auth } from "../config/firebaseConfig"; // Firebase configuration
 import { 
   User, 
@@ -42,6 +43,7 @@ export const useAuth = (): AuthContextProps => {
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
+  const navigate = useNavigate()
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -109,6 +111,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const provider = new GoogleAuthProvider();
       const userCredential = await signInWithPopup(auth, provider);
       const idToken = await getIdToken(userCredential.user);
+      navigate("/questions");
+
       console.log(idToken)
     //   await sendAuthRequestToBackend("https://zorra-lxsj.onrender.com/user/login", idToken);
     } catch (err) {

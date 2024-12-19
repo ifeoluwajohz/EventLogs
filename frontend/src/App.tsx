@@ -1,5 +1,6 @@
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom"
+import { Route, Routes } from "react-router-dom"
 import { useAuth } from './context/AuthContext'
+import { UserFlowProvider } from "./context/UserFlowContext"
 
 
 import Home from "./pages/Home"
@@ -10,13 +11,16 @@ import AccountPage from './utils/AccountPage'
 import AccountConfig from './utils/AccountConfig'
 
 
+import RoleSelectionPage from "./components/RoleSelectionPage";
+import AdminQuestionsPage from "./components/AdminQuestionPage";
+import AttendeeQuestionsPage from "./components/AttendeeQuestionsPage";
+import SummaryPage from "./components/SummaryPage";
 
 const App = () => {
   const {user} = useAuth();
 
   return (
     <>
-      <Router>
       <Navbar />
 
         <Routes>
@@ -28,7 +32,16 @@ const App = () => {
           <Route path='/accountconfig' element={ <AccountPage /> } />
         </Routes>
 
-      </Router>
+
+      <UserFlowProvider>
+        <Routes>
+          <Route path="/questions" element={<RoleSelectionPage />} />
+          <Route path="/admin-questions" element={<AdminQuestionsPage />} />
+          <Route path="/attendee-questions" element={<AttendeeQuestionsPage />} />
+          <Route path="/summary" element={<SummaryPage />} />
+        </Routes>
+      </UserFlowProvider>
+
     </>
   )
 }

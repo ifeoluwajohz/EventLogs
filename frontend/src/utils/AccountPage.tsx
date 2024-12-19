@@ -9,7 +9,7 @@ const AccountPage: React.FC = () => {
 
   return (
     <div className="w-full px-5 md:px-12 transform transition-all duration-300 ease-in-out mt-10">
-      <h1 className="text-3xl font-bold text-gray-800 mb-6">Account Settings</h1>
+      <h1 className="text-3xl font-bold text-gray-800 mb-6">Your Dashboard</h1>
       <div className="space-y-8">
         {user ? (
           <div className="space-y-4">
@@ -22,7 +22,6 @@ const AccountPage: React.FC = () => {
               <Link
                 to="/Settings"
                 className="block text-xl text-blue-600 hover:text-blue-800 transition duration-300 "
-              //   onClick={() => fetchUserProfile()}
 
               >
                 Account Info

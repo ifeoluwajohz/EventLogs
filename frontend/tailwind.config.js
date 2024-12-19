@@ -10,6 +10,12 @@ export default {
     "./src/components/Navbar.tsx",
     "./src/components/Carousel.tsx",
     "./src/components/HeroSection.tsx",
+    "./src/components/HeroSection.tsx",
+
+    "./src/components/RoleSelectionPage.tsx",
+    "./src/components/AdminQuestionPage.tsx",
+    "./src/components/AttendeeQuestionPage.tsx",
+    "./src/components/SummaryPage.tsx",
 
 
     "./src/utils/AccountPage.tsx",

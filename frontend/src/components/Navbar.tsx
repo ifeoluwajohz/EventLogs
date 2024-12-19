@@ -60,9 +60,7 @@ const Navbar: React.FC = () => {
               alt="Currency Icon"
             />
             { 
-              user ? 
-              <p>{ user.displayName ? user.displayName.split(" ")[0] : user.email }</p> : 
-              <p className="text-sm">login</p>
+              <Link to='/accountConfig'>Dashboard</Link>
             }
           </div>
         </div>
@@ -98,9 +96,7 @@ const Navbar: React.FC = () => {
                   alt="Currency Icon"
                 />
                 { 
-                  user ? 
-                  <p>{ user.displayName ? user.displayName.split(" ")[0] : user.email }</p> : 
-                  <p className="text-sm">login</p>
+                  <Link to='/accountConfig'><p className="text-sm">Dashboard</p></Link> 
                 }
               </div>
             </div>
