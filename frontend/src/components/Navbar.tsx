@@ -1,10 +1,8 @@
 import React, { useState } from "react";
-import { useAuth } from "../context/AuthContext";
 
 import { Link } from 'react-router-dom'
 
 const Navbar: React.FC = () => {
-  const { user } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
 
   return (
