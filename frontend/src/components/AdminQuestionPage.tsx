@@ -4,29 +4,43 @@ import { useUserFlow } from "../context/UserFlowContext";
 
 const AdminQuestionsPage: React.FC = () => {
   const navigate = useNavigate();
-  const { state, dispatch } = useUserFlow();
+  const { state, setEvent } = useUserFlow();
+
+  // Ensure answers are defined before destructuring
+  const {
+    title = "",
+    shortDescription = "",
+    longDescription = "",
+    date = "",
+    venue = "",
+    eventType = "FREE",
+    price = "",
+    capacity = "",
+    availableTickets = "",
+    category = "",
+    newCategory = "",
+  } = state.event || {};
 
   const [formData, setFormData] = useState({
-    title: state.answers["title"] || "",
-    shortDescription: state.answers["shortDescription"] || "",
-    longDescription: state.answers["longDescription"] || "",
-    date: state.answers["date"] || "",
-    venue: state.answers["venue"] || "",
-    eventType: state.answers["eventType"] || "FREE",
-    price: state.answers["price"] || "",
-    capacity: state.answers["capacity"] || "",
-    availableTickets: state.answers["availableTickets"] || "",
-    category: state.answers["category"] || "",
-    newCategory: "",
+    title,
+    shortDescription,
+    longDescription,
+    date,
+    venue,
+    eventType,
+    price,
+    capacity,
+    availableTickets,
+    category,
+    newCategory,
   });
 
-  const [categories, setCategories] = useState<string[]>([]); // Fetch from backend
+  const [categories, setCategories] = useState<string[]>([]);
 
-  // Fetch categories from backend
   useEffect(() => {
     async function fetchCategories() {
       try {
-        const response = await fetch("/api/categories"); // Replace with your endpoint
+        const response = await fetch("/api/categories");
         const data = await response.json();
         setCategories(data.categories || []);
       } catch (error) {
@@ -36,14 +50,20 @@ const AdminQuestionsPage: React.FC = () => {
     fetchCategories();
   }, []);
 
-  // Update context when form data changes
+  // UseRef to keep track of previous formData values
+  const prevFormData = React.useRef(formData);
+
   useEffect(() => {
     Object.entries(formData).forEach(([key, value]) => {
-      dispatch({ type: "SET_ANSWER", payload: { question: key, answer: value } });
+      if (key in prevFormData.current && prevFormData.current[key as keyof typeof prevFormData.current] !== value && key !== "newCategory") {
+        setEvent(key, value);
+      }
     });
-  }, [formData, dispatch]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement >) => {
+    prevFormData.current = formData;
+  }, [formData, setEvent]); // Only trigger when formData changes
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
@@ -69,9 +89,7 @@ const AdminQuestionsPage: React.FC = () => {
         <h1 className="text-3xl font-bold mb-8 text-gray-800 text-center">Event Details</h1>
         <form className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="flex flex-col">
-            <label htmlFor="title" className="font-semibold mb-2">
-              Event Title
-            </label>
+            <label htmlFor="title" className="font-semibold mb-2">Event Title</label>
             <input
               type="text"
               name="title"
@@ -82,9 +100,7 @@ const AdminQuestionsPage: React.FC = () => {
             />
           </div>
           <div className="flex flex-col">
-            <label htmlFor="shortDescription" className="font-semibold mb-2">
-              Short Description
-            </label>
+            <label htmlFor="shortDescription" className="font-semibold mb-2">Short Description</label>
             <input
               type="text"
               name="shortDescription"
@@ -95,9 +111,7 @@ const AdminQuestionsPage: React.FC = () => {
             />
           </div>
           <div className="flex flex-col md:col-span-2">
-            <label htmlFor="longDescription" className="font-semibold mb-2">
-              Long Description
-            </label>
+            <label htmlFor="longDescription" className="font-semibold mb-2">Long Description</label>
             <textarea
               name="longDescription"
               value={formData.longDescription}
@@ -108,9 +122,7 @@ const AdminQuestionsPage: React.FC = () => {
             />
           </div>
           <div className="flex flex-col">
-            <label htmlFor="date" className="font-semibold mb-2">
-              Event Date
-            </label>
+            <label htmlFor="date" className="font-semibold mb-2">Event Date</label>
             <input
               type="date"
               name="date"
@@ -120,64 +132,29 @@ const AdminQuestionsPage: React.FC = () => {
             />
           </div>
           <div className="flex flex-col">
-            <label htmlFor="venue" className="font-semibold mb-2">
-              Venue
-            </label>
+            <label htmlFor="venue" className="font-semibold mb-2">Venue</label>
             <input
               type="text"
               name="venue"
               value={formData.venue}
               onChange={handleChange}
-              placeholder="Enter event venue"
+              placeholder="Enter venue name"
               className="px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
             />
           </div>
           <div className="flex flex-col">
-            <label htmlFor="eventType" className="font-semibold mb-2">
-              Event Type
-            </label>
-            <select
-              name="eventType"
-              value={formData.eventType}
-              onChange={handleChange}
-              className="px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="FREE">Free</option>
-              <option value="PAID">Paid</option>
-            </select>
-          </div>
-          {formData.eventType === "PAID" && (
-            <div className="flex flex-col">
-              <label htmlFor="price" className="font-semibold mb-2">
-                Price
-              </label>
-              <input
-                type="number"
-                name="price"
-                value={formData.price}
-                onChange={handleChange}
-                placeholder="Enter ticket price"
-                className="px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-          )}
-          <div className="flex flex-col">
-            <label htmlFor="capacity" className="font-semibold mb-2">
-              Event Capacity
-            </label>
+            <label htmlFor="capacity" className="font-semibold mb-2">Capacity</label>
             <input
               type="number"
               name="capacity"
               value={formData.capacity}
               onChange={handleChange}
-              placeholder="Enter total capacity"
+              placeholder="Enter capacity"
               className="px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
             />
           </div>
           <div className="flex flex-col">
-            <label htmlFor="availableTickets" className="font-semibold mb-2">
-              Available Tickets
-            </label>
+            <label htmlFor="availableTickets" className="font-semibold mb-2">Available Tickets</label>
             <input
               type="number"
               name="availableTickets"
@@ -188,45 +165,49 @@ const AdminQuestionsPage: React.FC = () => {
             />
           </div>
           <div className="flex flex-col">
-            <label htmlFor="category" className="font-semibold mb-2">
-              Category
-            </label>
+            <label htmlFor="category" className="font-semibold mb-2">Category</label>
             <select
               name="category"
               value={formData.category}
               onChange={handleChange}
               className="px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
             >
-              <option value="">Select a category</option>
-              {categories.map((cat) => (
-                <option key={cat} value={cat}>
-                  {cat}
-                </option>
+              {categories.map((cat, index) => (
+                <option key={index} value={cat}>{cat}</option>
               ))}
             </select>
           </div>
           <div className="flex flex-col">
-            <label htmlFor="newCategory" className="font-semibold mb-2">
-              Add New Category
-            </label>
-            <div className="flex items-center gap-2">
-              <input
-                type="text"
-                name="newCategory"
-                value={formData.newCategory}
-                onChange={handleChange}
-                placeholder="Enter new category"
-                className="flex-1 px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
-              />
-              <button
-                type="button"
-                onClick={handleAddCategory}
-                className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition"
-              >
-                Add
-              </button>
-            </div>
+            <label htmlFor="newCategory" className="font-semibold mb-2">Add New Category</label>
+            <input
+              type="text"
+              name="newCategory"
+              value={formData.newCategory}
+              onChange={handleChange}
+              placeholder="Enter new category"
+              className="px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
+            />
+            <button
+              type="button"
+              onClick={handleAddCategory}
+              className="mt-2 py-2 px-4 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition"
+            >
+              Add Category
+            </button>
           </div>
+          {formData.eventType === "PAID" && (
+            <div className="flex flex-col">
+              <label htmlFor="price" className="font-semibold mb-2">Price</label>
+              <input
+                type="number"
+                name="price"
+                value={formData.price}
+                onChange={handleChange}
+                placeholder="Enter ticket price"
+                className="px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+          )}
         </form>
         <div className="flex mt-8 justify-between">
           <button
@@ -243,7 +224,7 @@ const AdminQuestionsPage: React.FC = () => {
             Next
           </button>
         </div>
-        </div>
+      </div>
     </div>
   );
 };

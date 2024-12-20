@@ -1,36 +1,30 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useUserFlow } from "../context/UserFlowContext";
 
 const AttendeeQuestionsPage: React.FC = () => {
   const navigate = useNavigate();
-  const { state, dispatch } = useUserFlow();
+  const { state, setEvent, addCategory, setSelectedCategories } = useUserFlow();
 
-  const [preferredName, setPreferredName] = useState<string>(state.answers["preferredName"] || "");
-  const [location, setLocation] = useState<string>(state.answers["location"] || "");
+  const [location, setLocation] = useState<string>(state.event["location"] || "");
   const [customCategory, setCustomCategory] = useState<string>("");
-
-  useEffect(() => {
-    dispatch({ type: "SET_ANSWER", payload: { question: "preferredName", answer: preferredName } });
-  }, [preferredName, dispatch]);
-
-  useEffect(() => {
-    dispatch({ type: "SET_ANSWER", payload: { question: "location", answer: location } });
-  }, [location, dispatch]);
 
   const handleCategorySelect = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedOptions = Array.from(event.target.selectedOptions, (option) => option.value);
-    dispatch({ type: "SET_SELECTED_CATEGORIES", payload: selectedOptions });
+    setSelectedCategories(selectedOptions);
   };
 
   const handleCustomCategoryAdd = () => {
-    if (customCategory) {
-      dispatch({ type: "ADD_CATEGORY", payload: customCategory });
+    if (customCategory && !state.categories.includes(customCategory)) {
+      addCategory(customCategory);
       setCustomCategory("");
     }
   };
 
-  const handleNext = () => navigate("/summary");
+  const handleNext = () => {
+    setEvent("location", location);
+    navigate("/summary");
+  };
 
   const handleGoBack = () => navigate(-1);
 
@@ -39,18 +33,10 @@ const AttendeeQuestionsPage: React.FC = () => {
       <div className="max-w-lg w-full p-6 bg-white shadow-md rounded-lg">
         <h1 className="text-2xl font-semibold mb-4">Attendee Information</h1>
         <form className="space-y-5">
-          <div>
-            <label htmlFor="preferredName">Preferred Name</label>
-            <input
-              id="preferredName"
-              type="text"
-              value={preferredName}
-              onChange={(e) => setPreferredName(e.target.value)}
-              className="mt-1 w-full px-4 py-2 border rounded"
-            />
-          </div>
-          <div>
-            <label htmlFor="location">Location</label>
+          <div className="my-6">
+            <label htmlFor="location" className="block text-sm font-medium text-gray-700">
+              Your Current Location
+            </label>
             <input
               id="location"
               type="text"
@@ -60,7 +46,9 @@ const AttendeeQuestionsPage: React.FC = () => {
             />
           </div>
           <div>
-            <label htmlFor="category">Categories</label>
+            <label htmlFor="category" className="block text-sm font-medium text-gray-700">
+              Event Category You Love Most
+            </label>
             <select
               id="category"
               multiple
@@ -85,17 +73,25 @@ const AttendeeQuestionsPage: React.FC = () => {
               <button
                 type="button"
                 onClick={handleCustomCategoryAdd}
-                className="ml-2 px-4 py-2 bg-blue-500 text-white rounded"
+                className="ml-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
               >
                 Add
               </button>
             </div>
           </div>
           <div className="flex justify-between">
-            <button type="button" onClick={handleGoBack} className="px-4 py-2 bg-gray-500 text-white rounded">
+            <button
+              type="button"
+              onClick={handleGoBack}
+              className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
+            >
               Go Back
             </button>
-            <button type="button" onClick={handleNext} className="px-4 py-2 bg-green-600 text-white rounded">
+            <button
+              type="button"
+              onClick={handleNext}
+              className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+            >
               Continue
             </button>
           </div>

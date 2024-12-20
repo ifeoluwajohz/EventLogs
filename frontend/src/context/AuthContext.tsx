@@ -58,28 +58,33 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }
 
   // Function to send authenticated requests to your backend
-//   const sendAuthRequestToBackend = async (url: string, idToken: string) => {
-//     try {
-//       const response = await fetch(url, {
-//         method: "POST",
-//         headers: {
-//           "Content-Type": "application/json",
-//         },
-//         body: JSON.stringify({ idToken }),
-//       });
+  const sendAuthRequestToBackend = async (url: string, idToken: string) => {
+    try {
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ idToken }),
+      });
 
-//       if (!response.ok) {
-//         const errorData = await response.json();
-//         throw new Error(errorData.error || "Failed to authenticate with the backend");
-//       }
-//       const responseData = await response.json();
-//       localStorage.setItem("jwt", responseData.token);
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Failed to authenticate with the backend");
+      }
+      const responseData = await response.json();
+      localStorage.setItem("jwt", responseData.token);
 
-//       console.log("Backend response:", responseData);
-//     } catch (error) {
-//       throw error; // Rethrow to propagate error to caller
-//     }
-//   };
+      console.log(responseData.user);
+      if (!responseData.user.location && !responseData.user.prefferedName){
+        navigate('/extra_info')
+      }else{
+        navigate('/questions')
+      }
+    } catch (error) {
+      throw error; // Rethrow to propagate error to caller
+    }
+  };
 
   // Signup function
   const signUp = async (email: string, password: string): Promise<void> => {
@@ -87,7 +92,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const idToken = await getIdToken(userCredential.user);
       console.log(idToken)
-    //   await sendAuthRequestToBackend("https://zorra-lxsj.onrender.com/user/register", idToken);
+      await sendAuthRequestToBackend("http://localhost:5000/user/loginUser", idToken);
     } catch (error) {
       console.error("Error during signup:", error);
     }
@@ -97,9 +102,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const signIn = async (email: string, password: string): Promise<void> => {
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
-      // const idToken = await getIdToken(userCredential.user);
-      console.log(userCredential)
-    //   await sendAuthRequestToBackend("https://zorra-lxsj.onrender.com/user/login", idToken);
+      const idToken = await getIdToken(userCredential.user);
+      console.log(idToken)
+
+      await sendAuthRequestToBackend("http://localhost:5000/user/loginUser", idToken);
     } catch (error) {
       console.error("Error during sign-in:", error);
     }
@@ -111,10 +117,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const provider = new GoogleAuthProvider();
       const userCredential = await signInWithPopup(auth, provider);
       const idToken = await getIdToken(userCredential.user);
-      navigate("/questions");
+      // navigate("/questions");
 
-      console.log(idToken)
-    //   await sendAuthRequestToBackend("https://zorra-lxsj.onrender.com/user/login", idToken);
+      await sendAuthRequestToBackend("http://localhost:5000/user/loginUser", idToken);
     } catch (err) {
       if (err instanceof Error) {
         console.log(err.message);

@@ -1,9 +1,11 @@
-import React, { createContext, useContext, useReducer } from "react";
+import React, { createContext, useContext, useState } from "react";
 
 interface UserFlowState {
   idToken: string | null;
   role: string | null;
-  answers: Record<string, string>;
+  preferredName: string | null;
+  location: string | null;
+  event: Record<string, string>;
   categories: string[];
   selectedCategories: string[];
 }
@@ -11,59 +13,70 @@ interface UserFlowState {
 const initialState: UserFlowState = {
   idToken: null,
   role: null,
-  answers: {},
+  preferredName: null,
+  location: null,
+  event: {},
   categories: [],
   selectedCategories: [],
 };
 
-type UserFlowAction =
-  | { type: "SET_ID_TOKEN"; payload: string }
-  | { type: "SET_ROLE"; payload: string }
-  | { type: "SET_ANSWER"; payload: { question: string; answer: string } }
-  | { type: "SET_CATEGORIES"; payload: string[] }
-  | { type: "ADD_CATEGORY"; payload: string }
-  | { type: "SET_SELECTED_CATEGORIES"; payload: string[] }
-  | { type: "RESET" };
-
-const reducer = (state: UserFlowState, action: UserFlowAction): UserFlowState => {
-  switch (action.type) {
-    case "SET_ID_TOKEN":
-      return { ...state, idToken: action.payload };
-    case "SET_ROLE":
-      return { ...state, role: action.payload };
-    case "SET_ANSWER":
-      return {
-        ...state,
-        answers: {
-          ...state.answers,
-          [action.payload.question]: action.payload.answer,
-        },
-      };
-    case "SET_CATEGORIES":
-      return { ...state, categories: action.payload };
-    case "ADD_CATEGORY":
-      return state.selectedCategories.includes(action.payload)
-        ? state
-        : { ...state, selectedCategories: [...state.selectedCategories, action.payload] };
-    case "SET_SELECTED_CATEGORIES":
-      return { ...state, selectedCategories: action.payload };
-    case "RESET":
-      return initialState;
-    default:
-      return state;
-  }
-};
-
-const UserFlowContext = createContext<{
+interface UserFlowContextProps {
   state: UserFlowState;
-  dispatch: React.Dispatch<UserFlowAction>;
-}>({ state: initialState, dispatch: () => null });
+  setIdToken: (idToken: string) => void;
+  setRole: (role: string) => void;
+  setpreferredName: (preferredName: string) => void;
+  setLocation: (location: string) => void;
+  setEvent: (question: string, answer: string) => void;
+  setCategories: (categories: string[]) => void;
+  addCategory: (category: string) => void;
+  setSelectedCategories: (categories: string[]) => void;
+  reset: () => void;
+}
+
+const UserFlowContext = createContext<UserFlowContextProps | undefined>(undefined);
 
 export const UserFlowProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [state, dispatch] = useReducer(reducer, initialState);
+  const [state, setState] = useState<UserFlowState>(initialState);
+
+  const setIdToken = (idToken: string) => setState((prev) => ({ ...prev, idToken }));
+  const setRole = (role: string) => setState((prev) => ({ ...prev, role }));
+  const setpreferredName = (preferredName: string) => setState((prev) => ({ ...prev, preferredName }));
+  const setLocation = (location: string) => setState((prev) => ({ ...prev, location }));
+  
+
+  const setEvent = (question: string, answer: string) =>
+    setState((prev) => ({
+      ...prev,
+      event: { ...prev.event, [question]: answer },
+    }));
+  const setCategories = (categories: string[]) =>
+    setState((prev) => ({ ...prev, categories }));
+  const addCategory = (category: string) =>
+    setState((prev) => ({
+      ...prev,
+      selectedCategories: prev.selectedCategories.includes(category)
+        ? prev.selectedCategories
+        : [...prev.selectedCategories, category],
+    }));
+  const setSelectedCategories = (categories: string[]) =>
+    setState((prev) => ({ ...prev, selectedCategories: categories }));
+  const reset = () => setState(initialState);
 
   return (
-    <UserFlowContext.Provider value={{ state, dispatch }}>
+    <UserFlowContext.Provider
+      value={{
+        state,
+        setIdToken,
+        setRole,
+        setpreferredName,
+        setLocation,
+        setEvent,
+        setCategories,
+        addCategory,
+        setSelectedCategories,
+        reset,
+      }}
+    >
       {children}
     </UserFlowContext.Provider>
   );

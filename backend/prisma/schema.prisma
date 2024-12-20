@@ -1,0 +1,197 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL") // Update with your database URL
+}
+
+model User {
+  id          String        @id @default(cuid())
+  firebaseUid String        @unique
+  email       String?        @unique
+  prefferedName String?      @unique
+  profilePicture String
+  location    String?
+  name        String?
+  phone       String?
+  role        Role          @default(USER)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  bookings    Booking[]     // One-to-many relation with Booking
+  tickets     Ticket[]      // One-to-many relation with Ticket
+  reviews     EventReview[] // One-to-many relation with EventReview
+  admin       Admin?        @relation("UserToAdmin") // References Admin
+}
+
+model Admin {
+  userId      String   @id // Primary key, references User
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  events      Event[] // One-to-many relation with Event
+  user        User     @relation("UserToAdmin", fields: [userId], references: [id]) // Relation to User
+}
+
+
+model Event {
+  id               String         @id @unique @default(cuid())
+  title            String
+  shortDescription String
+  longDescription  String
+  date             DateTime
+  venue            String
+  eventType        EventType
+  price            Float? // Null for free events
+  capacity         Int
+  availableTickets Int
+  pictureId        String
+  adminId          String         // Rename to match Admin model
+  bookings         Booking[]      // One-to-many relation with Booking
+  reviews          EventReview[]  // One-to-many relation with EventReview
+  discountCodes    DiscountCode[] // One-to-many relation with DiscountCode
+  tickets          Ticket[]       // One-to-many relation with Ticket
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+
+  picture          Picture        @relation(fields: [pictureId], references: [id])
+  admin            Admin @relation(fields: [adminId], references: [userId])
+
+  categories       EventCategory[]
+
+  @@index([adminId, title]) // Useful composite index
+}
+
+model EventReview {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String
+  eventId   String
+  rating    Int      @default(5) // Rating out of 5
+  comment   String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  event Event @relation(fields: [eventId], references: [id])
+  user  User  @relation(fields: [userId], references: [id]) // Ensure userId references the correct field in User model
+}
+
+model Picture {
+  id              String   @id @unique @default(cuid())
+  displayPicture  String
+  previewPictures String[]
+  Event           Event[]
+}
+
+model Booking {
+  id                String        @id @default(cuid())
+  userId            String
+  eventId           String
+  bookingDate       DateTime      @default(now())
+  quantity          Int
+  totalAmount       Float
+  status            BookingStatus @default(PENDING)
+  isActive          Boolean       @default(false)
+  cancellationReason String?      // For cancellations
+  refundStatus      String?       // e.g., refunded, processing, etc.
+  ticket            Ticket[]      // Clarify relationship
+  user              User          @relation(fields: [userId], references: [id])
+  event             Event         @relation(fields: [eventId], references: [id])
+  payment           Payment[]
+
+  @@index([userId, eventId])
+}
+
+model Category {
+  id     String          @id @default(cuid())
+  name   String          @unique
+  events EventCategory[]
+}
+
+model EventCategory {
+  id         String   @id @default(cuid())
+  eventId    String
+  categoryId String
+  event      Event    @relation(fields: [eventId], references: [id])
+  category   Category @relation(fields: [categoryId], references: [id])
+}
+
+model Ticket {
+  id          String       @id @default(uuid()) @db.Uuid
+  eventId     String
+  bookingId   String? // Optional bookingId
+  userId      String?
+  status      TicketStatus @default(AVAILABLE)
+  purchasedAt DateTime?
+
+  event   Event    @relation(fields: [eventId], references: [id])
+  booking Booking? @relation(fields: [bookingId], references: [id]) // Optional booking relation
+  user    User?    @relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([eventId, userId])
+}
+
+model Payment {
+  id        String        @id @default(uuid()) @db.Uuid
+  bookingId String // Each payment is linked to a booking
+  amount    Float
+  status    PaymentStatus @default(PENDING)
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+
+  booking Booking @relation(fields: [bookingId], references: [id]) // Required relationship to Booking
+}
+
+model DiscountCode {
+  id         String   @id @default(uuid()) @db.Uuid
+  code       String   @unique
+  discount   Float
+  eventId    String
+  expiration DateTime
+  isActive   Boolean  @default(true)
+
+  event Event @relation(fields: [eventId], references: [id])
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum AttendanceStatus {
+  PENDING
+  ATTENDED
+  NOT_ATTENDED
+}
+
+enum TicketStatus {
+  AVAILABLE
+  BOOKED
+  CANCELLED
+}
+
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  FAILED
+}
+
+enum EventType {
+  FREE
+  PAID
+}
+
+enum EventStatus {
+  UPCOMING
+  COMPLETED
+  CANCELLED
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+}

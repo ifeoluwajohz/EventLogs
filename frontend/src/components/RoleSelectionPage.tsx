@@ -4,10 +4,10 @@ import { useUserFlow } from "../context/UserFlowContext";
 
 const RoleSelectionPage: React.FC = () => {
   const navigate = useNavigate();
-  const { dispatch } = useUserFlow();
+  const { setRole } = useUserFlow();
 
   const handleSelection = (role: string) => {
-    dispatch({ type: "SET_ROLE", payload: role });
+    setRole(role);
     if (role === "admin") {
       navigate("/admin-questions");
     } else {
@@ -22,12 +22,14 @@ const RoleSelectionPage: React.FC = () => {
         <div className="space-y-4 mt-4">
           <button
             onClick={() => handleSelection("admin")}
-            className="w-full py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
-              Admin
+            className="w-full py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+          >
+            Admin
           </button>
           <button
-            onClick={() => handleSelection("attendee")}
-            className="w-full py-2 bg-gray-800 text-white rounded-md hover:bg-gray-700">
+            onClick={() => handleSelection("user")}
+            className="w-full py-2 bg-gray-800 text-white rounded-md hover:bg-gray-700"
+          >
             Attendee
           </button>
         </div>

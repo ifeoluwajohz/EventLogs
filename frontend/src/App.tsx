@@ -10,7 +10,7 @@ import Navbar from "./components/Navbar"
 import AccountPage from './utils/AccountPage'
 import AccountConfig from './utils/AccountConfig'
 
-
+import ExtraInfo from "./components/ExtraInfo"
 import RoleSelectionPage from "./components/RoleSelectionPage";
 import AdminQuestionsPage from "./components/AdminQuestionPage";
 import AttendeeQuestionsPage from "./components/AttendeeQuestionsPage";
@@ -35,6 +35,7 @@ const App = () => {
 
       <UserFlowProvider>
         <Routes>
+          <Route path="/extra_info" element={<ExtraInfo />} />
           <Route path="/questions" element={<RoleSelectionPage />} />
           <Route path="/admin-questions" element={<AdminQuestionsPage />} />
           <Route path="/attendee-questions" element={<AttendeeQuestionsPage />} />

@@ -12,9 +12,10 @@ export default {
     "./src/components/HeroSection.tsx",
     "./src/components/HeroSection.tsx",
 
+    "./src/components/ExtraInfoPage.tsx",
     "./src/components/RoleSelectionPage.tsx",
     "./src/components/AdminQuestionPage.tsx",
-    "./src/components/AttendeeQuestionPage.tsx",
+    "./src/components/AttendeeQuestionsPage.tsx",
     "./src/components/SummaryPage.tsx",
 
 
