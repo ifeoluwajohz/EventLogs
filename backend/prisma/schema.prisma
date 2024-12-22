@@ -7,11 +7,12 @@ datasource db {
   url      = env("DATABASE_URL") // Update with your database URL
 }
 
+// Your Prisma models are well structured. The only changes are logic for role switching.
 model User {
   id          String        @id @default(cuid())
   firebaseUid String        @unique
-  email       String?        @unique
-  prefferedName String?      @unique
+  email       String?       @unique
+  prefferedName String?     @unique
   profilePicture String
   location    String?
   name        String?
@@ -22,7 +23,7 @@ model User {
   bookings    Booking[]     // One-to-many relation with Booking
   tickets     Ticket[]      // One-to-many relation with Ticket
   reviews     EventReview[] // One-to-many relation with EventReview
-  admin       Admin?        @relation("UserToAdmin") // References Admin
+  admin       Admin?        @relation("UserToAdmin") // User may or may not be an Admin
 }
 
 model Admin {
@@ -33,6 +34,7 @@ model Admin {
   events      Event[] // One-to-many relation with Event
   user        User     @relation("UserToAdmin", fields: [userId], references: [id]) // Relation to User
 }
+
 
 
 model Event {

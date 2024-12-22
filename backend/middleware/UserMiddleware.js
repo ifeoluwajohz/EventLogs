@@ -19,6 +19,7 @@ const UserMiddleware = async (req, res, next) => {
         const user = await prisma.user.findUnique({ where: { id: decoded.userId } });
 
         if (!user) {
+            console.log({error: "Unauthorized: User not found"})
             return res.status(401).json({ error: 'Unauthorized: User not found' });
         }
 

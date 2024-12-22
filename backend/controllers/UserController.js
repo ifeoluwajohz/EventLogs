@@ -20,13 +20,15 @@ const generateToken = (userId) => {
 
 // user profile controllers
 const getUserDetails = async (req, res) => {
-    const { id } = req.params;
-    // Logic to retrieve user details from the database
     try{
-        res.json({ message: `Retrieved user details for user ID: ${id}` });
-
+        const user = req.user;
+        if(!user){
+            return res.status(404).json({error: "user not found"})
+        }
+        res.status(201).json({ user })
     }catch(err){
         console.log(err.message)
+        res.status(500).json({err: err.message})
     }
 };
 
@@ -92,7 +94,7 @@ const updateUser = async (req, res) => {
       // Check if the user exists
       const existingUser = await prisma.user.findUnique({
         where: { id: Number(id) }, // Ensure `id` is a number
-      });
+      });fd
   
       if (!existingUser) {
         return res.status(404).json({ error: `User with ID ${id} not found` });
@@ -113,8 +115,62 @@ const updateUser = async (req, res) => {
       res.status(500).json({ error: "Failed to update user" });
     }
   };
-  
 
+  const switchRole = async (req, res) => {
+    const { id, currentRole } = req.body;
+  
+    if (!id || !currentRole) {
+      return res.status(400).json({ error: "User ID and current role are required" });
+    }
+  
+    const validRoles = ["USER", "ADMIN"];
+    if (!validRoles.includes(currentRole)) {
+      return res.status(400).json({ error: "Invalid role provided" });
+    }
+  
+    try {
+      // Fetch the user
+      const user = await prisma.user.findUnique({
+        where: { id },
+        include: { admin: true }, // Include Admin relation if exists
+      });
+  
+      if (!user) {
+        return res.status(404).json({ error: "User not found" });
+      }
+  
+      let newRole = currentRole === "USER" ? "ADMIN" : "USER";
+  
+      // Switch role
+      if (newRole === "ADMIN" && !user.admin) {
+        // Create admin record if not existing
+        await prisma.admin.create({
+          data: { userId: id },
+        });
+        console.log("Admin privileges granted");
+      }
+  
+      if (newRole === "USER" && user.admin) {
+        // Remove admin-related actions if necessary (you could keep the record but prevent admin-specific actions)
+        console.log("User privileges granted");
+      }
+  
+      // Update user role in the database
+      const updatedUser = await prisma.user.update({
+        where: { id },
+        data: { role: newRole },
+      });
+  
+      // Return the updated user data
+      return res.status(200).json({
+        message: `User role switched to ${newRole}`,
+        data: updatedUser,
+      });
+    } catch (err) {
+      return res.status(500).json({ error: err.message });
+    }
+  };
+  
 
 // user tickets controllers
 const getUserTicket = async (req, res) => {
@@ -190,4 +246,4 @@ const deleteBooking = async (req, res) => {
 }
 
 
-module.exports = { getUserDetails,loginUser, updateUser, getUserTicket , getAllTicket, deleteTicket , getUserBookings, getAllBoooking, createBooking, deleteBooking };
+module.exports = { getUserDetails, switchRole ,loginUser, updateUser, getUserTicket , getAllTicket, deleteTicket , getUserBookings, getAllBoooking, createBooking, deleteBooking };
