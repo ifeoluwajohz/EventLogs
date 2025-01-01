@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useState, useEffect } from "react";
+import { useAuth } from "./AuthContext"; // Adjust the path as needed
 
 interface UserFlowState {
   idToken: string | null;
@@ -24,25 +25,57 @@ interface UserFlowContextProps {
   state: UserFlowState;
   setIdToken: (idToken: string) => void;
   setRole: (role: string) => void;
-  setpreferredName: (preferredName: string) => void;
+  setPreferredName: (preferredName: string) => void;
   setLocation: (location: string) => void;
   setEvent: (question: string, answer: string) => void;
   setCategories: (categories: string[]) => void;
   addCategory: (category: string) => void;
   setSelectedCategories: (categories: string[]) => void;
   reset: () => void;
+  syncWithBackend: () => Promise<void>;
 }
 
-const UserFlowContext = createContext<UserFlowContextProps | undefined>(undefined);
+const UserFlowContext = createContext<UserFlowContextProps | undefined>(
+  undefined
+);
 
 export const UserFlowProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const { userProfile, user } = useAuth();
   const [state, setState] = useState<UserFlowState>(initialState);
+
+  const storedToken = localStorage.getItem("jwt");
+
+
+
+  useEffect(() => {
+    // Read JWT token on component mount
+    if (typeof window !== "undefined") {
+      const storedToken = localStorage.getItem("jwt");
+      if (storedToken) {
+        setState((prev) => ({
+          ...prev,
+          idToken: storedToken,
+        }));
+      }
+    }
+  
+    // Sync data from AuthContext
+    if (userProfile) {
+      setState((prev) => ({
+        ...prev,
+        role: userProfile.role || null,
+        preferredName: userProfile.name || null,
+        location: userProfile.location || null,
+      }));
+    }
+  }, [userProfile]);
+  
 
   const setIdToken = (idToken: string) => setState((prev) => ({ ...prev, idToken }));
   const setRole = (role: string) => setState((prev) => ({ ...prev, role }));
-  const setpreferredName = (preferredName: string) => setState((prev) => ({ ...prev, preferredName }));
+  const setPreferredName = (preferredName: string) =>
+    setState((prev) => ({ ...prev, preferredName }));
   const setLocation = (location: string) => setState((prev) => ({ ...prev, location }));
-  
 
   const setEvent = (question: string, answer: string) =>
     setState((prev) => ({
@@ -62,19 +95,39 @@ export const UserFlowProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     setState((prev) => ({ ...prev, selectedCategories: categories }));
   const reset = () => setState(initialState);
 
+  const syncWithBackend = async (): Promise<void> => {
+    try {
+      const response = await fetch("http://localhost:5000/event/create", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("jwt")?.toString()}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(state.event),
+      });
+
+      console.log(localStorage.getItem("jwt"))
+      const data = await response.json();
+      console.log(data, "data")
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+
   return (
     <UserFlowContext.Provider
       value={{
         state,
         setIdToken,
         setRole,
-        setpreferredName,
+        setPreferredName,
         setLocation,
         setEvent,
         setCategories,
         addCategory,
         setSelectedCategories,
         reset,
+        syncWithBackend,
       }}
     >
       {children}
@@ -82,7 +135,7 @@ export const UserFlowProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   );
 };
 
-export const useUserFlow = () => {
+export const useUserFlow = (): UserFlowContextProps => {
   const context = useContext(UserFlowContext);
   if (!context) {
     throw new Error("useUserFlow must be used within a UserFlowProvider");

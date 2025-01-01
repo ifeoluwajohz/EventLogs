@@ -46,9 +46,8 @@ model Event {
   venue            String
   eventType        EventType
   price            Float? // Null for free events
-  capacity         Int
   availableTickets Int
-  pictureId        String
+  pictureId        String?
   adminId          String         // Rename to match Admin model
   bookings         Booking[]      // One-to-many relation with Booking
   reviews          EventReview[]  // One-to-many relation with EventReview
@@ -57,7 +56,7 @@ model Event {
   createdAt        DateTime       @default(now())
   updatedAt        DateTime       @updatedAt
 
-  picture          Picture        @relation(fields: [pictureId], references: [id])
+  picture          Picture?        @relation(fields: [pictureId], references: [id])
   admin            Admin @relation(fields: [adminId], references: [userId])
 
   categories       EventCategory[]

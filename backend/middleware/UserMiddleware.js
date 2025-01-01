@@ -31,4 +31,18 @@ const UserMiddleware = async (req, res, next) => {
     }
 };
 
-module.exports = UserMiddleware;
+const verifyAdmin = (req, res, next) => {
+    const { role } = req.user; // Assuming `req.user` is populated via authentication middleware
+
+    if (role !== "ADMIN") {
+        return res.status(403).json({ error: "Access denied. Admins only." });
+    }
+
+    next(); // Proceed to the next middleware or route handler
+};
+
+
+module.exports = {
+    UserMiddleware,
+    verifyAdmin
+};

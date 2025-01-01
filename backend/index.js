@@ -8,16 +8,14 @@ const ticketRoutes = require("./routes/TicketRoute");
 const cors = require('cors')
 
 app.use(express.json());
-app.use(cors({
-    origin: '*',
-    credentials: true
-}))
+app.use(cors({ origin: '*', credentials: true }));
+
 
 // Routes
 app.use("/user", userRoutes);
-// app.use("/api/events", eventRoutes);
+app.use("/event", eventRoutes);
 // app.use("/api/bookings", bookingRoutes);
-// app.use("/api/tickets", ticketRoutes);
+app.use("/tickets", ticketRoutes);
 
 // Start the server
 const PORT = process.env.PORT || 5000;

@@ -27,7 +27,7 @@ const Carousel: React.FC = () => {
       <div className="flex transition-transform duration-500 ease-in-out">
         {visibleData.map((item, index) => (
           <div
-            key={item.id}
+            key={index}
             className={`min-w-[80%] sm:min-w-[45%] md:min-w-[30%] transition-transform ${
               index === currentIndex ? "opacity-100 scale-100" : "opacity-50 scale-90"
             }`}

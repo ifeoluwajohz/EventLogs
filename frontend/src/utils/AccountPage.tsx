@@ -1,9 +1,20 @@
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { UserProfile } from "../types/userTypes";
+import { Link } from "react-router-dom";
+
 
 const AccountPage: React.FC = () => {
-  const { user, userProfile, fetchUserProfile, updateUserProfile, switchRole, role } = useAuth();
+  const {
+    user,
+    loading,
+    userProfile,
+    fetchUserProfile,
+    updateUserProfile,
+    switchRole,
+    role,
+    signOut
+  } = useAuth();
   const [localUserProfile, setLocalUserProfile] = useState<UserProfile | null>(null);
   const [editMode, setEditMode] = useState<boolean>(false);
   const [formData, setFormData] = useState({
@@ -12,18 +23,17 @@ const AccountPage: React.FC = () => {
   });
 
   useEffect(() => {
-    const initializeProfile = async () => {
+    const initializeProfile = () => {
       if (!userProfile) {
-        // await fetchUserProfile();
+        fetchUserProfile().catch((error) => console.error("Error fetching user profile:", error));
       }
-      setLocalUserProfile(userProfile);
+      setLocalUserProfile(userProfile || null);
       setFormData({
-        preferredName: userProfile?.preferredName || "",
+        preferredName: userProfile?.prefferedName || "",
         location: userProfile?.location || "",
       });
+      console.log(userProfile);
     };
-
-    console.log(user?.email)
 
     initializeProfile();
   }, [userProfile, fetchUserProfile]);
@@ -40,21 +50,22 @@ const AccountPage: React.FC = () => {
       setEditMode(false);
     } catch (error) {
       console.error("Error updating profile:", error);
+      alert("Failed to update profile. Please try again.");
     }
   };
 
   const handleRoleSwitch = async () => {
     try {
-      const newRole = role === "user" ? "admin" : "user"; // Dynamic role switching
-      await switchRole(newRole.toUpperCase());
+      const newRole = role === "user" ? "admin" : "user";
+      await switchRole();
       alert(`Switched to ${newRole.toUpperCase()} role`);
-      updateUserProfile({ role: newRole }); // Update local state for instant feedback
     } catch (error) {
       console.error("Error switching role:", error);
+      alert("Failed to switch role. Please try again.");
     }
   };
 
-  if (!localUserProfile) {
+  if (loading) {
     return (
       <div className="flex justify-center items-center h-screen">
         <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-blue-500"></div>
@@ -65,31 +76,42 @@ const AccountPage: React.FC = () => {
   return (
     <div className="w-full px-5 md:px-12 mt-10">
       <h1 className="text-2xl font-bold text-gray-800 mb-6">
-        Welcome, {user?.displayName || "User"}!
+        Welcome {user?.displayName || ""}!
       </h1>
-
-      <div className="space-y-8">
+      {!localUserProfile ? 
+      (
+        <div className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4">
+          <p>
+            It seems like your profile is not fully set up. Please complete your
+            profile to access all features.
+          </p>
+          <button
+            onClick={() => setEditMode(true)}
+            className="mt-4 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+          >
+            <Link to='/login'>Complete Profile</Link>
+          </button>
+        </div>
+      )
+      : 
+      ( <div className="space-y-8">
         {!editMode ? (
           <div>
             <p className="text-gray-700">
-              You are logged in as <strong>{role.toString().toUpperCase()}</strong>.
+              You are logged in as <strong>{userProfile?.role.toString()}</strong>.
             </p>
 
-            {role === "user" ? (
-              <p className="text-gray-500 mt-2">
-                As a user, you can browse, manage your account, and interact with available services.
-              </p>
-            ) : (
-              <p className="text-gray-500 mt-2">
-                As an admin, you have access to advanced features and management tools.
-              </p>
-            )}
+            <p className="text-gray-500 mt-2">
+              {role !== "user"
+                ? "As a user, you can browse, manage your account, and interact with available services."
+                : "As an admin, you have access to advanced features and management tools."}
+            </p>
 
             <button
               onClick={handleRoleSwitch}
               className="mt-4 text-blue-600 hover:text-blue-700 transition-all"
             >
-              Switch to {role === "user" ? "Admin" : "User"} Account
+              Switch to {userProfile?.role.toString() === "USER" ? "Admin" : "User"} Account
             </button>
 
             <p
@@ -98,10 +120,15 @@ const AccountPage: React.FC = () => {
             >
               Edit Your Profile
             </p>
+            <Link 
+            to={userProfile?.role.toString() !== "USER" ? "/admin-questions" : '/attendee-questions'}
+              className="mt-8 text-blue-600 hover:text-blue-700 cursor-pointer"
+            >
+              Manage Events
+            </Link>
           </div>
         ) : (
           <form className="space-y-4">
-            {/* Editable Fields */}
             <div>
               <label className="block font-bold">Preferred Name:</label>
               <input
@@ -123,23 +150,22 @@ const AccountPage: React.FC = () => {
               />
             </div>
 
-            {/* Disabled Fields */}
             <div>
               <label className="block font-bold">Email:</label>
               <input
                 type="text"
                 value={localUserProfile.email}
                 disabled
-                className="border px-4 py-2 w-full rounded bg-gray-100"
+                className="border px-4 py-2 w-full rounded bg-gray-100 cursor-not-allowed"
               />
             </div>
             <div>
               <label className="block font-bold">Role:</label>
               <input
                 type="text"
-                value={role.toString()}
+                value={userProfile?.role.toString().toUpperCase()}
                 disabled
-                className="border px-4 py-2 w-full rounded bg-gray-100"
+                className="border px-4 py-2 w-full rounded bg-gray-100 cursor-not-allowed"
               />
             </div>
             <div>
@@ -148,11 +174,10 @@ const AccountPage: React.FC = () => {
                 type="text"
                 value={user?.displayName || ""}
                 disabled
-                className="border px-4 py-2 w-full rounded bg-gray-100"
+                className="border px-4 py-2 w-full rounded bg-gray-100 cursor-not-allowed"
               />
             </div>
 
-            {/* Save & Cancel Buttons */}
             <div className="flex space-x-4 mt-4">
               <button
                 type="button"
@@ -171,7 +196,10 @@ const AccountPage: React.FC = () => {
             </div>
           </form>
         )}
+      <button className="bg-red-500 px-6 py-2 font-bold text-gray-100 mt-2" onClick={signOut}>Log out</button>
+
       </div>
+      )}
     </div>
   );
 };

@@ -23,10 +23,6 @@ const HeroSection: React.FC = () => {
             placeholder="Location here"
             className="border border-gray-300 px-4 py-3 rounded-lg w-full md:w-72 focus:outline-none"
           />
-          <input
-            type="date"
-            className="border border-gray-300 px-4 py-3 rounded-lg w-full md:w-44 focus:outline-none"
-          />
           <div className="flex items-center border border-gray-300 rounded-lg px-4 py-3 w-full md:w-36">
             <span className="text-gray-600 mr-2">1</span>
             <span>▼</span>

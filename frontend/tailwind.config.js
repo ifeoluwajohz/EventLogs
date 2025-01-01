@@ -20,7 +20,12 @@ export default {
 
 
     "./src/utils/AccountPage.tsx",
-    "./src/utils/AccountConfig.tsx"
+    "./src/utils/AccountConfig.tsx",
+
+    "./src/config/CreateEventForm.tsx",
+    "./src/utils/UpdateEventContext.tsx",
+
+
 
   ],
   theme: {

@@ -29,7 +29,7 @@ const SignInComponent: React.FC = () => {
     if (user) {
       navigate("/questions");
     }
-  }, [user, navigate]);
+  }, [user]);
 
   if (loading) return <p>Loading...</p>;
 

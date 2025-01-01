@@ -16,18 +16,35 @@ const AdminMiddleware = async (req, res, next) => {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
         // Find user by the ID encoded in the token
-        const admin = await prisma.admin.findUnique({ where: { id: decoded.adminId } });
+        const user = await prisma.user.findUnique({ where: { id: decoded.userId } });
 
-        if (!admin) {
-            return res.status(401).json({ error: 'Unauthorized: admin not found' });
+        if (!user) {
+            console.log({error: "Unauthorized: User not found"})
+            return res.status(401).json({ error: 'Unauthorized: User not found' });
         }
 
         // Attach the user object to the request
-        req.admin = admin;
+        req.admin = user;
+        // console.log(user)
         next(); // Proceed to the next middleware or route handler
     } catch (error) {
+        console.log(error)
         res.status(401).json({ error: 'Unauthorized: Invalid token' });
     }
 };
 
-module.exports = AdminMiddleware;
+const verifyAdmin = (req, res, next) => {
+    const { role } = req.user; // Assuming `req.user` is populated via authentication middleware
+
+    if (role !== "ADMIN") {
+        return res.status(403).json({ error: "Access denied. Admins only." });
+    }
+
+    next(); // Proceed to the next middleware or route handler
+};
+
+
+module.exports = {
+    AdminMiddleware,
+    verifyAdmin
+};

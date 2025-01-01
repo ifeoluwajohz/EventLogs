@@ -7,8 +7,21 @@ export interface UserProfile {
   location: string | null;
   prefferedName: string | null;
   profilePicture: string | null;
+  event?: Event | null;
 }
 
 export interface Role {
   role: string;
+}
+
+interface Event{
+  title: string;
+  shortDescription: string;
+  longDescription: string;
+  date: Date;
+  venue: string;
+  capacity: Number;
+  avalaibleTickets: Number
+  eventType: ["PAID", "FREE"];
+  price: Number;
 }

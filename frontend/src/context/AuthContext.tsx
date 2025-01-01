@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Role, UserProfile } from "../types/userTypes"
 import { auth } from "../config/firebaseConfig";
 import {
   User,
@@ -13,29 +14,13 @@ import {
   getIdToken,
 } from "firebase/auth";
 
-// Define the interfaces
-export interface UserProfile {
-  id: string;
-  email: string;
-  firebaseUid: string | null;
-  name: string;
-  role: Role;
-  location: string | null;
-  preferredName: string | null;
-  profilePicture: string | null;
-}
-
-export interface Role {
-  role: string;
-}
-
 interface AuthContextProps {
   user: User | null;
   userProfile: UserProfile | null;
   loading: boolean;
   role: Role | string;
-  setRole: React.Dispatch<React.SetStateAction<Role | null>>;
-  switchRole: (role: string) => Promise<void>;
+  setRole: React.Dispatch<React.SetStateAction<Role | string>>;
+  switchRole: () => Promise<void>;
   setUser: React.Dispatch<React.SetStateAction<User | null>>;
   setUserProfile: React.Dispatch<React.SetStateAction<UserProfile | null>>;
   signUp: (email: string, password: string) => Promise<void>;
@@ -59,133 +44,84 @@ export const useAuth = (): AuthContextProps => {
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [role, setRole] = useState<Role | "user">("user");
+  const [role, setRole] = useState<Role | string>({ role: "user" });
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const navigate = useNavigate();
+  const token = localStorage.getItem("jwt");
+
+
+  const API_URL = "http://localhost:5000";
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       setUser(firebaseUser);
       if (firebaseUser) {
         await fetchUserProfile();
+      } else {
+        setUserProfile(null);
+        localStorage.removeItem("jwt");
       }
       setLoading(false);
     });
     return () => unsubscribe();
-  }, []);
-
-  const sendAuthRequestToBackend = async (url: string, idToken: string) => {
-    setLoading(true);
-    try {
-      const response = await fetch(url, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ idToken }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || "Failed to authenticate with the backend");
-      }
-
-      const responseData = await response.json();
-      localStorage.setItem("jwt", responseData.token);
-      setUserProfile(responseData.user);
-
-      const { location, preferredName } = responseData.user;
-      navigate(!location && !preferredName ? "/extra_info" : "/questions");
-    } catch (error) {
-      console.error("Error sending auth request:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  }, [navigate]);
 
   const fetchUserProfile = async (): Promise<void> => {
     try {
-      setLoading(true);
-      const token = localStorage.getItem("jwt");
-      if (!token){
-        console.log("Token not found");
-        // setUser(null)
-        navigate('/')
+      if (!token) {
+        setUser(null);
+        return;
       }
 
-      const response = await fetch("http://localhost:5000/user/getUser", {
+      const response = await fetch(`${API_URL}/user/getUser`, {
         method: "GET",
+        // credentials: 'include',
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
       });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || "Failed to fetch profile");
-      }
+      // if (!response.ok) {
+      //   throw new Error("Failed to fetch profile");
+      // }
 
       const data = await response.json();
-      setUserProfile(data.user);
       console.log(data)
+      setUserProfile(data.user);
     } catch (error) {
-      console.log("Error fetching profile:", error);
-    } finally {
-      setLoading(false);
+      console.error("Error fetching profile:", error);
     }
   };
 
-  const updateUserProfile = async (updates: Partial<UserProfile>): Promise<void> => {
-    try {
-      const token = localStorage.getItem("jwt");
-      const response = await fetch("http://localhost:5000/user/updateUser", {
+  const switchRole = async (): Promise<void> => {
+    try{
+      const response = await fetch(`${API_URL}/user/switchRole`, {
         method: "PUT",
+        // credentials: 'include',
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(updates),
+        body: JSON.stringify({id:userProfile?.id, currentRole: userProfile?.role.toString().toUpperCase() })
+
       });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || "Failed to update profile");
-      }
-    } catch (error) {
-      console.error("Error updating profile:", error);
+      const data = await response.json();
+      console.log(data)
+      fetchUserProfile()
+      // setUserProfile(data.user);
+    }catch(err){
+      console.log(err.message)
     }
-  };
-
-  const switchRole = async (newRole: string): Promise<void> => {
-    try {
-      const token = localStorage.getItem("jwt");
-      const response = await fetch("http://localhost:5000/user/switchRole", {
-        method: "PUT",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ id:role,  currentRole: newRole }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || "Failed to switch role");
-      }
-
-      const responseData = await response.json();
-      console.log(responseData)
-      setRole(responseData.role);
-    } catch (error) {
-      console.error("Error switching role:", error);
-    }
-  };
+  }
 
   const signUp = async (email: string, password: string): Promise<void> => {
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const idToken = await getIdToken(userCredential.user);
-      await sendAuthRequestToBackend("http://localhost:5000/user/loginUser", idToken);
+      await sendAuthRequestToBackend(`${API_URL}/user/register`, idToken);
     } catch (error) {
       console.error("Error during signup:", error);
     }
@@ -195,7 +131,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       const idToken = await getIdToken(userCredential.user);
-      await sendAuthRequestToBackend("http://localhost:5000/user/loginUser", idToken);
+      await sendAuthRequestToBackend(`${API_URL}/user/loginUser`, idToken);
     } catch (error) {
       console.error("Error during sign-in:", error);
     }
@@ -206,28 +142,43 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const provider = new GoogleAuthProvider();
       const userCredential = await signInWithPopup(auth, provider);
       const idToken = await getIdToken(userCredential.user);
-      await sendAuthRequestToBackend("http://localhost:5000/user/loginUser", idToken);
+      await sendAuthRequestToBackend(`${API_URL}/user/loginUser`, idToken);
     } catch (error) {
       console.error("Google Sign-In Error:", error);
     }
   };
 
-  const signInWithTwitter = async (): Promise<void> => {
+  const signOut = async (): Promise<void> => {
     try {
-      const provider = new TwitterAuthProvider();
-      const userCredential = await signInWithPopup(auth, provider);
-      const idToken = await getIdToken(userCredential.user);
-      await sendAuthRequestToBackend("http://localhost:5000/user/loginUser", idToken);
+      await firebaseSignOut(auth);
+      localStorage.removeItem("jwt");
+      setUser(null);
+      setUserProfile(null);
+      navigate("/");
     } catch (error) {
-      console.error("Twitter Sign-In Error:", error);
+      console.error("Error signing out:", error);
     }
   };
 
-  const signOut = async (): Promise<void> => {
-    await firebaseSignOut(auth);
-    localStorage.removeItem("jwt");
-    setUser(null);
-    setUserProfile(null);
+  const sendAuthRequestToBackend = async (url: string, idToken: string) => {
+    try {
+      const response = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ idToken }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to authenticate with the backend");
+      }
+
+      const data = await response.json();
+      localStorage.setItem("jwt", data.token);
+      setUserProfile(data.user);
+      navigate("/accountConfig");
+    } catch (error) {
+      console.error("Error sending auth request:", error);
+    }
   };
 
   return (
@@ -237,14 +188,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         userProfile,
         loading,
         role,
-        switchRole,
+        setRole,
+        switchRole, // Implement switching roles if needed
         setUser,
         setUserProfile,
-        updateUserProfile,
+        updateUserProfile: async () => {}, // Implement updating profile if needed
         signUp,
         signIn,
         signInWithGoogle,
-        signInWithTwitter,
+        signInWithTwitter: async () => {}, // Implement if needed
         fetchUserProfile,
         signOut,
       }}
