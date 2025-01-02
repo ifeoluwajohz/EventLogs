@@ -25,14 +25,13 @@ const AccountPage: React.FC = () => {
   useEffect(() => {
     const initializeProfile = () => {
       if (!userProfile) {
-        fetchUserProfile().catch((error) => console.error("Error fetching user profile:", error));
+        fetchUserProfile().catch((error) => console.log("Error fetching user profile:", error));
       }
       setLocalUserProfile(userProfile || null);
       setFormData({
         preferredName: userProfile?.prefferedName || "",
         location: userProfile?.location || "",
       });
-      console.log(userProfile);
     };
 
     initializeProfile();
@@ -46,11 +45,11 @@ const AccountPage: React.FC = () => {
   const handleSave = async () => {
     try {
       await updateUserProfile(formData);
-      alert("Profile updated successfully!");
+      // alert("Profile updated successfully!");
       setEditMode(false);
     } catch (error) {
       console.error("Error updating profile:", error);
-      alert("Failed to update profile. Please try again.");
+      // alert("Failed to update profile. Please try again.");
     }
   };
 
@@ -58,7 +57,6 @@ const AccountPage: React.FC = () => {
     try {
       const newRole = role === "user" ? "admin" : "user";
       await switchRole();
-      alert(`Switched to ${newRole.toUpperCase()} role`);
     } catch (error) {
       console.error("Error switching role:", error);
       alert("Failed to switch role. Please try again.");
@@ -120,12 +118,14 @@ const AccountPage: React.FC = () => {
             >
               Edit Your Profile
             </p>
+            <p className="mt-4">
             <Link 
             to={userProfile?.role.toString() !== "USER" ? "/admin-questions" : '/attendee-questions'}
-              className="mt-8 text-blue-600 hover:text-blue-700 cursor-pointer"
+              className="text-blue-600 hover:text-blue-700 cursor-pointer"
             >
               Manage Events
             </Link>
+            </p>
           </div>
         ) : (
           <form className="space-y-4">

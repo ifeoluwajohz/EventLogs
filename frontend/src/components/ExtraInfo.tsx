@@ -4,12 +4,12 @@ import { useUserFlow } from "../context/UserFlowContext";
 
 const ExtraInfoPage: React.FC = () => {
   const navigate = useNavigate();
-  const { state, setpreferredName } = useUserFlow();
+  const { state } = useUserFlow();
 
   const [preferredName, setPreferredName] = useState<string>(state.preferredName || "");
 
   const handleNext = () => {
-    setpreferredName(preferredName);
+    // setpreferredName(preferredName);
     navigate("/questions");
   };
 

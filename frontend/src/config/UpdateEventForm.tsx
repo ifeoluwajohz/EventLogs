@@ -1,17 +1,32 @@
 import React, { useState, useEffect } from "react";
 import { useEvent } from "../context/EventContext";
 
+interface EventFormData {
+  title: string;
+  shortDescription: string;
+  longDescription: string;
+  date: string;
+  venue: string;
+  eventType: "FREE" | "PAID"; // Ensuring this is strictly typed
+  price: number;
+  capacity: number;
+  availableTickets: number;
+  adminId: string;
+  pictureId: string;
+  categories: string; // Stored as a comma-separated string
+}
+
 const UpdateEventForm: React.FC<{ eventId: string }> = ({ eventId }) => {
   const { updateEvent, events, loading, error } = useEvent();
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<EventFormData>({
     title: "",
     shortDescription: "",
     longDescription: "",
     date: "",
     venue: "",
-    eventType: "FREE",
-    price: 0,
-    capacity: 0,
+    eventType: "FREE", // Default to "FREE"
+    price: 0, // Default to 0
+    capacity: 0, // Default to 0
     availableTickets: 0,
     adminId: "",
     pictureId: "",
@@ -21,18 +36,24 @@ const UpdateEventForm: React.FC<{ eventId: string }> = ({ eventId }) => {
   useEffect(() => {
     const event = events.find((e) => e.id === eventId);
     if (event) {
-      setFormData({ ...event, categories: event.categories.join(",") });
+      setFormData({
+        ...event,
+        categories: Array.isArray(event.categories) ? event.categories.join(",") : "", // Handle categories array
+        capacity: event.capacity ?? 0, // Default to 0 if capacity is missing
+        price: event.price ?? 0, // Default to 0 if price is missing
+        adminId: event.admin || "",   // Map admin to adminId
+        eventType: event.eventType === "PAID" || event.eventType === "FREE" ? event.eventType : "FREE", // Ensure eventType is valid
+      });
     }
   }, [eventId, events]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await updateEvent(eventId, { ...formData, categories: formData.categories.split(",") });
+    await updateEvent(eventId, {
+      ...formData,
+      categories: formData.categories.split(","), // Split categories back to array
+      admin: formData.adminId, // Map adminId to admin
+    });
   };
 
   return (
@@ -42,7 +63,23 @@ const UpdateEventForm: React.FC<{ eventId: string }> = ({ eventId }) => {
     >
       <h2 className="text-3xl font-bold text-indigo-600 mb-6">Update Event</h2>
 
-      {/* Add fields here similarly */}
+      <div className="mb-4">
+        <label htmlFor="title" className="block text-sm font-medium text-gray-700">
+          Title
+        </label>
+        <input
+          type="text"
+          id="title"
+          name="title"
+          value={formData.title}
+          onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+          className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+          required
+        />
+      </div>
+
+      {/* Add other input fields similarly */}
+
       <div className="flex justify-between">
         <button
           type="submit"

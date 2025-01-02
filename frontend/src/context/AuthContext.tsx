@@ -10,7 +10,7 @@ import {
   signInWithEmailAndPassword,
   signInWithPopup,
   GoogleAuthProvider,
-  TwitterAuthProvider,
+  // TwitterAuthProvider,
   getIdToken,
 } from "firebase/auth";
 
@@ -95,6 +95,36 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  const updateUserProfile = async (updates: Partial<UserProfile>): Promise<void> => {
+    try {
+      const response = await fetch(`${API_URL}/user/updateUser/${userProfile?.id}`, {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updates),
+      });
+  
+      // if (!response.ok) {
+      //   throw new Error("Failed to update user profile");
+      // }
+  
+      const data = await response.json();
+      setUserProfile(data.data); // Update the user profile in the context
+      console.log("User profile updated successfully", data);
+    } catch (error) {
+      if (error instanceof Error) {
+        console.log(error.message); // Safely access the error message
+      } else {
+        console.log("An unknown error occurred:", error);
+      }
+    }
+    
+  };
+  
+  
+
   const switchRole = async (): Promise<void> => {
     try{
       const response = await fetch(`${API_URL}/user/switchRole`, {
@@ -112,9 +142,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       console.log(data)
       fetchUserProfile()
       // setUserProfile(data.user);
-    }catch(err){
-      console.log(err.message)
+    }catch (error) {
+      if (error instanceof Error) {
+        console.log(error.message); // Safely access the error message
+      } else {
+        console.log("An unknown error occurred:", error);
+      }
     }
+    
   }
 
   const signUp = async (email: string, password: string): Promise<void> => {
@@ -189,10 +224,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         loading,
         role,
         setRole,
-        switchRole, // Implement switching roles if needed
+        switchRole,
         setUser,
         setUserProfile,
-        updateUserProfile: async () => {}, // Implement updating profile if needed
+        updateUserProfile, // Updated function
         signUp,
         signIn,
         signInWithGoogle,
@@ -203,5 +238,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     >
       {!loading && children}
     </AuthContext.Provider>
+
   );
 };

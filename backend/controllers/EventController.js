@@ -77,18 +77,20 @@ const bookEvent = async (req, res) => {
     }
 };
 
-// Delete a booking
-const deleteBooking = async (req, res) => {
+
+const deleteEvent = async (req, res) => {
     const { id } = req.params;
     try {
-        await prisma.booking.delete({
+        await prisma.event.delete({
             where: { id },
         });
-        res.status(200).json({ message: "Booking deleted successfully." });
+        res.status(200).json({ message: "Event deleted successfully." });
     } catch (error) {
-        res.status(500).json({ error: "Failed to delete booking." });
+        console.log(error.message)
+        res.status(500).json({ error: "Failed to Event booking." });
     }
 };
+
 
 // Create or update an event (Admin only)
 const createOrUpdateEvent = async (req, res) => {
@@ -244,6 +246,6 @@ module.exports = {
     addEventReview,
     getEventReviews,
     bookEvent,
-    deleteBooking,
+    deleteEvent,
     createOrUpdateEvent,
 };

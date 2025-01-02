@@ -1,7 +1,10 @@
+// import { useState } from "react"
 import { Route, Routes } from "react-router-dom"
 import { useAuth } from './context/AuthContext'
 import { EventProvider } from './context/EventContext'
 import { UserFlowProvider } from "./context/UserFlowContext"
+// import { UserProfile } from "../types/userTypes";
+
 
 
 import Home from "./pages/Home"
@@ -19,10 +22,14 @@ import SummaryPage from "./components/SummaryPage";
 
 
 import CreateEventForm from "./config/CreateEventForm"
-import UpdateEventForm from "./config/UpdateEventForm"
+// import UpdateEventForm from "./config/UpdateEventForm"
 
 const App = () => {
-  const {user} = useAuth();
+  const { user, userProfile } = useAuth();
+  // const [localUserProfile] = useState<UserProfile | null>(null);
+
+  console.log(userProfile?.role)
+  
 
   return (
     <>
@@ -39,7 +46,7 @@ const App = () => {
       <EventProvider>
         <Routes>
           <Route path="/createEvent" element={ <CreateEventForm />} />
-          <Route path="/updateEvent" element={ <UpdateEventForm />} />
+          {/* <Route path="/updateEvent" element={ <UpdateEventForm />} /> */}
 
         </Routes>
       </EventProvider>

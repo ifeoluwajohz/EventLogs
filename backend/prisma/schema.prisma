@@ -107,6 +107,8 @@ model Category {
   id     String          @id @default(cuid())
   name   String          @unique
   events EventCategory[]
+  @@index([name]) // Useful composite index
+
 }
 
 model EventCategory {

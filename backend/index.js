@@ -1,6 +1,7 @@
 const express = require("express");
 const app = express();
 const userRoutes = require("./routes/UserRoute");
+const searchRoutes = require("./routes/SearchRoute")
 // const adminRoutes = require("./routes/AdminRoute");
 const eventRoutes = require("./routes/EventRoute");
 const bookingRoutes = require("./routes/BookingRoute");
@@ -15,6 +16,7 @@ app.use(cors({ origin: '*', credentials: true }));
 app.use("/user", userRoutes);
 app.use("/event", eventRoutes);
 // app.use("/api/bookings", bookingRoutes);
+app.use("/search", searchRoutes);
 app.use("/tickets", ticketRoutes);
 
 // Start the server

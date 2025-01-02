@@ -11,6 +11,7 @@ export default {
     "./src/components/Carousel.tsx",
     "./src/components/HeroSection.tsx",
     "./src/components/HeroSection.tsx",
+    "./src/components/EventsSearchByLocation.tsx",
 
     "./src/components/ExtraInfoPage.tsx",
     "./src/components/RoleSelectionPage.tsx",
@@ -24,7 +25,6 @@ export default {
 
     "./src/config/CreateEventForm.tsx",
     "./src/utils/UpdateEventContext.tsx",
-
 
 
   ],

@@ -16,8 +16,8 @@ const {
 // user profile conrollers
 router.get("/getUser", UserMiddleware, getUserDetails); // Retrieve user details
 router.post("/loginUser",  loginUser); // Create new User Account
-router.put("/:id/updateUser", updateUser); // Update user details
-router.put("/:id/updateUser", updateUser); // Update user details
+// router.put("/:id/updateUser", updateUser); // Update user details
+router.put("/updateUser/:id", updateUser); // Update user details
 router.put("/switchRole", UserMiddleware, switchRole)
 
 

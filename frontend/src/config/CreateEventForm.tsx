@@ -1,9 +1,24 @@
 import React, { useState } from "react";
 import { useEvent } from "../context/EventContext";
 
+interface EventFormData {
+  title: string;
+  shortDescription: string;
+  longDescription: string;
+  date: string;
+  venue: string;
+  eventType: "FREE" | "PAID";
+  price: number;
+  availableTickets: number;
+  admin: string;
+  pictureId: string;
+  categories: string;
+}
+
 const CreateEventForm: React.FC = () => {
   const { createEvent, loading, error } = useEvent();
-  const [formData, setFormData] = useState({
+
+  const [formData, setFormData] = useState<EventFormData>({
     title: "",
     shortDescription: "",
     longDescription: "",
@@ -17,9 +32,16 @@ const CreateEventForm: React.FC = () => {
     categories: "",
   });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value as "FREE" | "PAID" }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -46,11 +68,14 @@ const CreateEventForm: React.FC = () => {
           value={formData.title}
           onChange={handleChange}
           className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          required
         />
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700">Short Description</label>
+        <label className="block text-sm font-medium text-gray-700">
+          Short Description
+        </label>
         <textarea
           name="shortDescription"
           value={formData.shortDescription}
@@ -59,44 +84,13 @@ const CreateEventForm: React.FC = () => {
         />
       </div>
 
-      <div>
-        <label className="block text-sm font-medium text-gray-700">Long Description</label>
-        <textarea
-          name="longDescription"
-          value={formData.longDescription}
-          onChange={handleChange}
-          className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
-        />
-      </div>
-
-      <div>
-        <label className="block text-sm font-medium text-gray-700">Date</label>
-        <input
-          type="datetime-local"
-          name="date"
-          value={formData.date}
-          onChange={handleChange}
-          className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
-        />
-      </div>
-
-      <div>
-        <label className="block text-sm font-medium text-gray-700">Venue</label>
-        <input
-          type="text"
-          name="venue"
-          value={formData.venue}
-          onChange={handleChange}
-          className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
-        />
-      </div>
-
+      {/* Other fields */}
       <div>
         <label className="block text-sm font-medium text-gray-700">Event Type</label>
         <select
           name="eventType"
           value={formData.eventType}
-          onChange={handleChange}
+          onChange={handleSelectChange}
           className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
         >
           <option value="FREE">Free</option>
@@ -113,56 +107,12 @@ const CreateEventForm: React.FC = () => {
             value={formData.price}
             onChange={handleChange}
             className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            required={formData.eventType === "PAID"}
           />
         </div>
       )}
 
-
-      <div>
-        <label className="block text-sm font-medium text-gray-700">Available Tickets</label>
-        <input
-          type="number"
-          name="availableTickets"
-          value={formData.availableTickets}
-          onChange={handleChange}
-          className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
-        />
-      </div>
-
-      <div>
-        <label className="block text-sm font-medium text-gray-700">Admin ID</label>
-        <input
-          type="text"
-          name="adminId"
-          value={formData.admin}
-          onChange={handleChange}
-          className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
-        />
-      </div>
-
-      <div>
-        <label className="block text-sm font-medium text-gray-700">Picture ID</label>
-        <input
-          type="text"
-          name="pictureId"
-          value={formData.pictureId}
-          onChange={handleChange}
-          className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
-        />
-      </div>
-
-      <div>
-        <label className="block text-sm font-medium text-gray-700">Categories</label>
-        <input
-          type="text"
-          name="categories"
-          value={formData.categories}
-          onChange={handleChange}
-          placeholder="Separate categories with commas"
-          className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
-        />
-      </div>
-
+      {/* Submit button */}
       <div className="flex justify-between items-center">
         <button
           type="submit"

@@ -116,14 +116,16 @@ const loginUser = async (req, res) => {
 };
 
 const updateUser = async (req, res) => {
-    const { id } = req.params; // Extract the user ID from URL parameters
+    const { id } = req.params; // Extract the user ID from the route parameter
     const userData = req.body; // Extract user data from the request body
   
     try {
+  
+  
       // Check if the user exists
       const existingUser = await prisma.user.findUnique({
-        where: { id: Number(id) }, // Ensure `id` is a number
-      });fd
+        where: { id: id },
+      });
   
       if (!existingUser) {
         return res.status(404).json({ error: `User with ID ${id} not found` });
@@ -131,19 +133,20 @@ const updateUser = async (req, res) => {
   
       // Update the user with new data
       const updatedUser = await prisma.user.update({
-        where: { id: Number(id) },
-        data: userData, // Dynamically update with the provided data
+        where: { id: id },
+        data: { userData }, // Spread operator to dynamically update fields
       });
   
-      res.status(200).json({
+      return res.status(200).json({
         message: `User ID ${id} updated successfully`,
         data: updatedUser,
       });
     } catch (err) {
-      console.error("Error updating user:", err.message);
-      res.status(500).json({ error: "Failed to update user" });
+      console.log("Error updating user:", err.message);
+      return res.status(500).json({ error: err.message });
     }
   };
+  
 
   const switchRole = async (req, res) => {
     const { id, currentRole } = req.body;

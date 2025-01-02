@@ -40,10 +40,10 @@ const UserFlowContext = createContext<UserFlowContextProps | undefined>(
 );
 
 export const UserFlowProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { userProfile, user } = useAuth();
+  const { userProfile } = useAuth();
   const [state, setState] = useState<UserFlowState>(initialState);
 
-  const storedToken = localStorage.getItem("jwt");
+  // const storedToken = localStorage.getItem("jwt");
 
 
 
@@ -63,11 +63,12 @@ export const UserFlowProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     if (userProfile) {
       setState((prev) => ({
         ...prev,
-        role: userProfile.role || null,
+        role: typeof userProfile.role === 'string' ? userProfile.role : null,
         preferredName: userProfile.name || null,
         location: userProfile.location || null,
       }));
     }
+    
   }, [userProfile]);
   
 
@@ -110,8 +111,13 @@ export const UserFlowProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       const data = await response.json();
       console.log(data, "data")
     } catch (error) {
-      console.log(error.message);
+      if (error instanceof Error) {
+        console.log(error.message); // Safely access the error message
+      } else {
+        console.log("An unknown error occurred:", error);
+      }
     }
+    
   };
 
   return (

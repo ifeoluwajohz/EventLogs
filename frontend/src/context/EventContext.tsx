@@ -10,6 +10,7 @@ interface Event {
   eventType: "FREE" | "PAID";
   price?: number;
   availableTickets: number;
+  capacity: number;
   admin: string;
   pictureId: string;
   categories: string[];
