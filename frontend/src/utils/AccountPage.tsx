@@ -55,7 +55,7 @@ const AccountPage: React.FC = () => {
 
   const handleRoleSwitch = async () => {
     try {
-      const newRole = role === "user" ? "admin" : "user";
+      // const newRole = role === "user" ? "admin" : "user";
       await switchRole();
     } catch (error) {
       console.error("Error switching role:", error);

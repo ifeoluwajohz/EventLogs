@@ -13,6 +13,7 @@ interface EventFormData {
   admin: string;
   pictureId: string;
   categories: string;
+  capacity: number;  // Add capacity here
 }
 
 const CreateEventForm: React.FC = () => {
@@ -30,6 +31,7 @@ const CreateEventForm: React.FC = () => {
     admin: "",
     pictureId: "",
     categories: "",
+    capacity: 0,  // Initialize capacity
   });
 
   const handleChange = (
@@ -111,6 +113,19 @@ const CreateEventForm: React.FC = () => {
           />
         </div>
       )}
+
+      {/* Capacity Field */}
+      <div>
+        <label className="block text-sm font-medium text-gray-700">Capacity</label>
+        <input
+          type="number"
+          name="capacity"
+          value={formData.capacity}
+          onChange={handleChange}
+          className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          required
+        />
+      </div>
 
       {/* Submit button */}
       <div className="flex justify-between items-center">
