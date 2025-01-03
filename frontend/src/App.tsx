@@ -24,6 +24,8 @@ import SummaryPage from "./components/SummaryPage";
 import CreateEventForm from "./config/CreateEventForm"
 // import UpdateEventForm from "./config/UpdateEventForm"
 
+import EventDeatils from "./components/EventDeatils"
+
 const App = () => {
   const { user, userProfile } = useAuth();
   // const [localUserProfile] = useState<UserProfile | null>(null);
@@ -43,6 +45,7 @@ const App = () => {
           <Route path='/login' element={!user ? <AccountConfig /> : <Home/>} />
           <Route path='/accountconfig' element={ <AccountPage /> } />
         </Routes>
+        
       <EventProvider>
         <Routes>
           <Route path="/createEvent" element={ <CreateEventForm />} />
@@ -50,6 +53,10 @@ const App = () => {
 
         </Routes>
       </EventProvider>
+
+      <Routes>
+        <Route path="/event/:id" element={<EventDeatils />} />
+      </Routes>
 
       <UserFlowProvider>
         <Routes>

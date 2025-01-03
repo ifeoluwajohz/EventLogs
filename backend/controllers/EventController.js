@@ -3,7 +3,6 @@ const prisma = new PrismaClient();
 
 // Fetch all events
 const getAllEvents = async (req, res) => {
-    // const {id} = req.query;
     try {
         const events = await prisma.event.findMany();
         res.status(200).json(events);

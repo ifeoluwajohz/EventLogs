@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
+import { Link } from "react-router-dom";
 
 interface Event {
     id: string;
@@ -7,6 +8,8 @@ interface Event {
     shortDescription: string;
     date: string;
     venue: string;
+    availableTickets: number;
+    eventType: string;
 }
 
 const EventSearchByLocation: React.FC = () => {
@@ -22,13 +25,15 @@ const EventSearchByLocation: React.FC = () => {
 
         try {
             const response = await fetch(
-                `http://localhost:5000/search/byLocation/?location=${encodeURIComponent(searchLocation)}`
+                `https://zorra-lxsj.onrender.com/search/byLocation/?location=${searchLocation}`
             );
             if (!response.ok) {
                 throw new Error("Failed to fetch events");
             }
             const data: Event[] = await response.json();
             setEvents(data);
+        console.log(data)
+
         } catch (err) {
             setError((err as Error).message);
         } finally {
@@ -40,8 +45,10 @@ const EventSearchByLocation: React.FC = () => {
         // Fetch events using the default location on component mount
         if (userProfile?.location) {
             fetchEvents(userProfile.location);
-        }
-    }, [userProfile]);
+        }else(
+            fetchEvents(location)
+        );
+    }, [userProfile, location]);
 
     const handleSearch = () => {
         if (location.trim()) {
@@ -64,7 +71,7 @@ const EventSearchByLocation: React.FC = () => {
                 </p>
 
                 {/* Location Search */}
-                <div className="flex flex-col sm:flex-row gap-4 items-center">
+                <form className="flex flex-col sm:flex-row gap-4 items-center">
                     <input
                         type="text"
                         placeholder="Enter location..."
@@ -78,10 +85,14 @@ const EventSearchByLocation: React.FC = () => {
                     >
                         <p className="">Search</p>
                     </button>
-                </div>
+                </form>
 
                 {/* Loading State */}
-                {loading && <p className="text-blue-600 mt-6 text-center">Loading events...</p>}
+                {loading && 
+                <div className="flex justify-center items-center h-screen">
+                    <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-blue-500"></div>
+                </div>
+                }
 
                 {/* Error State */}
                 {error && <p className="text-red-500 mt-6 text-center">{error}</p>}
@@ -92,20 +103,21 @@ const EventSearchByLocation: React.FC = () => {
                         <h2 className="text-2xl font-semibold text-blue-900 mb-4 text-center">
                             Events Near {location}
                         </h2>
-                        <ul className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+                        <div className="grid grid-col-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
                             {events.map((event) => (
-                                <li
+                                <Link 
+                                    to={`/event/${event.id}`}
                                     key={event.id}
-                                    className="p-5 bg-gradient-to-r from-indigo-50 to-blue-50 border-l-4 border-blue-500 rounded-lg shadow-md hover:shadow-lg transition-shadow"
+                                    className="search-event bg-white p-4 rounded-lg shadow-lg hover:shadow-2xl transition-all duration-300 ease-in-out"
                                 >
                                     <h3 className="text-lg font-bold text-blue-800">{event.title}</h3>
                                     <p className="text-gray-600 mt-2">{event.shortDescription}</p>
                                     <p className="text-sm text-gray-500 mt-4">
                                         {new Date(event.date).toLocaleDateString()} | {event.venue}
                                     </p>
-                                </li>
+                                </Link >
                             ))}
-                        </ul>
+                        </div>
                     </div>
                 )}
 

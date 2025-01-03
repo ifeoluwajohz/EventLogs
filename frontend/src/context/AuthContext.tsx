@@ -51,7 +51,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const token = localStorage.getItem("jwt");
 
 
-  const API_URL = "http://localhost:5000";
+  const API_URL = "https://zorra-lxsj.onrender.com";
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
