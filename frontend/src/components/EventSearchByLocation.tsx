@@ -25,7 +25,7 @@ const EventSearchByLocation: React.FC = () => {
 
         try {
             const response = await fetch(
-                `https://zorra-lxsj.onrender.com/search/byLocation/?location=${searchLocation}`
+                `https://theevent-i5i1.onrender.com/search/byLocation/?location=${searchLocation}`
             );
             if (!response.ok) {
                 throw new Error("Failed to fetch events");

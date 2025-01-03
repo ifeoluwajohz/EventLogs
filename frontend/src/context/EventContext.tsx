@@ -34,13 +34,13 @@ export const EventProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const token = localStorage.getItem("jwt");
 
 
-  // const API_URL = "https://zorra-lxsj.onrender.com";
+  // const API_URL = "https://theevent-i5i1.onrender.com";
 
   const createEvent = async (event: Event) => {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch("https://zorra-lxsj.onrender.com/event/create", {
+      const response = await fetch("https://theevent-i5i1.onrender.com/event/create", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -62,7 +62,7 @@ export const EventProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch(`https://zorra-lxsj.onrender.com/events/create_event/${id}`, {
+      const response = await fetch(`https://theevent-i5i1.onrender.com/events/create_event/${id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

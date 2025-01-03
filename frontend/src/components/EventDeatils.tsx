@@ -25,7 +25,7 @@ const EventDeatils:React.FC = () => {
             //   throw new Error('Invalid event ID');
             // }
     
-            const response = await fetch(`https://zorra-lxsj.onrender.com/event/${id}`);
+            const response = await fetch(`https://theevent-i5i1.onrender.com/event/${id}`);
             if (!response.ok) {
               throw new Error('Failed to fetch event details');
             }

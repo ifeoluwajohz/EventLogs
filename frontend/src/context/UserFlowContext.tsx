@@ -98,7 +98,7 @@ export const UserFlowProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
   const syncWithBackend = async (): Promise<void> => {
     try {
-      const response = await fetch("https://zorra-lxsj.onrender.com/event/create", {
+      const response = await fetch("https://theevent-i5i1.onrender.com/event/create", {
         method: "POST",
         headers: {
           Authorization: `Bearer ${localStorage.getItem("jwt")?.toString()}`,
