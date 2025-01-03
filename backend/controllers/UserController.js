@@ -111,7 +111,7 @@ const loginUser = async (req, res) => {
 
   } catch (err) {
       console.error("Error verifying ID token:", err.message);
-      res.status(400).json({ error: "Invalid token" });
+      res.status(400).json({ error: err.message });
   }
 };
 
