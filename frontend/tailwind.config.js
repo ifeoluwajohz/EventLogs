@@ -11,7 +11,8 @@ export default {
     "./src/components/Carousel.tsx",
     "./src/components/HeroSection.tsx",
     "./src/components/HeroSection.tsx",
-    "./src/components/EventsSearchByLocation.tsx",
+    "./src/components/EventSearchByLocation.tsx",
+    "./src/components/OrderButton.tsx",
     "./src/components/EventDetails.tsx",
 
     "./src/components/ExtraInfoPage.tsx",

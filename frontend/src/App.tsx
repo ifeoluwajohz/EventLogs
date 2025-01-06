@@ -24,14 +24,14 @@ import SummaryPage from "./components/SummaryPage";
 import CreateEventForm from "./config/CreateEventForm"
 // import UpdateEventForm from "./config/UpdateEventForm"
 
-import EventDeatils from "./components/EventDeatils"
+import EventDeatils from "./components/EventDetails"
 
 const App = () => {
   const { user, userProfile } = useAuth();
   // const [localUserProfile] = useState<UserProfile | null>(null);
-
-  console.log(userProfile?.role)
-  
+  // https://theevent-i5i1.onrender.com
+  // console.log(userProfile?.role)
+  // http://localhost:5000
 
   return (
     <>

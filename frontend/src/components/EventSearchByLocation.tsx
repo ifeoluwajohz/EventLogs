@@ -25,15 +25,11 @@ const EventSearchByLocation: React.FC = () => {
 
         try {
             const response = await fetch(
-                `https://theevent-i5i1.onrender.com/search/byLocation/?location=${searchLocation}`
+                `http://localhost:5000/search/byLocation/?location=${searchLocation}`
             );
-            if (!response.ok) {
-                throw new Error("Failed to fetch events");
-            }
             const data: Event[] = await response.json();
             setEvents(data);
-        console.log(data)
-
+            console.log(data);
         } catch (err) {
             setError((err as Error).message);
         } finally {
@@ -42,12 +38,11 @@ const EventSearchByLocation: React.FC = () => {
     };
 
     useEffect(() => {
-        // Fetch events using the default location on component mount
         if (userProfile?.location) {
             fetchEvents(userProfile.location);
-        }else(
-            fetchEvents(location)
-        );
+        } else {
+            fetchEvents(location);
+        }
     }, [userProfile, location]);
 
     const handleSearch = () => {
@@ -55,6 +50,44 @@ const EventSearchByLocation: React.FC = () => {
             fetchEvents(location);
         }
     };
+
+    const fetchCurrentLocation = async () => {
+        if (!navigator.geolocation) {
+            setError("Geolocation is not supported by your browser.");
+            return;
+        }
+    
+        navigator.geolocation.getCurrentPosition(
+            async (position) => {
+                const { latitude, longitude } = position.coords;
+    
+                try {
+                    // Reverse Geocoding API call
+                    const response = await fetch(
+                        `https://api.opencagedata.com/geocode/v1/json?q=${latitude}+${longitude}&key=ca38854e4bde4792bca2d07f11fdfbb2`
+                    );
+                    const data = await response.json();
+    
+                    if (data.results && data.results.length > 0) {
+                        console.log(data)
+                        const locationName = data.results[0].formatted; // Extract meaningful location name
+                        setLocation(locationName);
+                        fetchEvents(locationName); // Trigger event search with location name
+                    } else {
+                        setError("Could not determine your location name. Please try again.");
+                    }
+                } catch (err) {
+                    setError("Error fetching location name. Please check your connection.");
+                    console.error(err);
+                }
+            },
+            (err) => {
+                setError("Unable to retrieve location. Please try again.");
+                console.error(err);
+            }
+        );
+    };
+    
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-indigo-100 via-white to-blue-50 flex flex-col items-center justify-center px-4 py-8">
@@ -66,8 +99,7 @@ const EventSearchByLocation: React.FC = () => {
                     These are the events happening near{" "}
                     <span className="font-semibold text-blue-700">
                         {userProfile?.location || "your chosen location"}
-                    </span>
-                    . You can also search for events in other locations.
+                    </span>.
                 </p>
 
                 {/* Location Search */}
@@ -81,18 +113,27 @@ const EventSearchByLocation: React.FC = () => {
                     />
                     <button
                         onClick={handleSearch}
-                        className="w-full sm:w-auto px-6 py-3 bg-gray-500 font-semibold rounded-lg text-white"
+                        type="button"
+                        className="w-full sm:w-auto px-6 py-3 bg-blue-500 font-semibold rounded-lg text-white"
                     >
-                        <p className="">Search</p>
+                        Search
                     </button>
                 </form>
 
+                {/* Live Location Button */}
+                <button
+                    onClick={fetchCurrentLocation}
+                    className="w-full sm:w-auto mt-4 px-6 py-3 font-medium text-base underline rounded-lg text-black"
+                >
+                    Or Use Current Location
+                </button>
+
                 {/* Loading State */}
-                {loading && 
-                <div className="flex justify-center items-center h-screen">
-                    <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-blue-500"></div>
-                </div>
-                }
+                {loading && (
+                    <div className="flex justify-center items-center h-screen">
+                        <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-blue-500"></div>
+                    </div>
+                )}
 
                 {/* Error State */}
                 {error && <p className="text-red-500 mt-6 text-center">{error}</p>}
@@ -100,22 +141,25 @@ const EventSearchByLocation: React.FC = () => {
                 {/* Events */}
                 {events && events.length > 0 && (
                     <div className="mt-8">
-                        <h2 className="text-2xl font-semibold text-blue-900 mb-4 text-center">
+                        <h2 className="text-2xl font-semibold text-blue-900 mb-10 text-center">
                             Events Near {location}
                         </h2>
-                        <div className="grid grid-col-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                             {events.map((event) => (
-                                <Link 
+                                <Link
                                     to={`/event/${event.id}`}
                                     key={event.id}
-                                    className="search-event bg-white p-4 rounded-lg shadow-lg hover:shadow-2xl transition-all duration-300 ease-in-out"
+                                    className="search-event bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 ease-in-out text-left"
                                 >
-                                    <h3 className="text-lg font-bold text-blue-800">{event.title}</h3>
-                                    <p className="text-gray-600 mt-2">{event.shortDescription}</p>
-                                    <p className="text-sm text-gray-500 mt-4">
-                                        {new Date(event.date).toLocaleDateString()} | {event.venue}
+                                    <h3 className="text-base font-bold text-black">
+                                        {event.title.toUpperCase()}
+                                    </h3>
+                                    <p className="text-xs text-gray-600">
+                                        {new Date(event.date).toDateString()}
                                     </p>
-                                </Link >
+                                    <p className="text-gray-600">{event.eventType}</p>
+                                    <p className="text-semibold text-xs">{event.venue}</p>
+                                </Link>
                             ))}
                         </div>
                     </div>

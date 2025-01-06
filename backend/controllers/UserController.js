@@ -54,7 +54,7 @@ const loginUser = async (req, res) => {
           const token = generateToken(user.id);
 
         // res.cookie('jwt', token, {httpOnly: true, maxAge: maxage * 1000, secure: true, sameSite: 'lax'})
-        res.status(201).json({ message: "Welcome, new user!", user, token });
+        return res.status(201).json({ message: "Welcome, new user!", user, token });
       }
 
       // Create a new user with necessary related data
@@ -107,7 +107,7 @@ const loginUser = async (req, res) => {
 
       // Respond with user details and token
     //   res.cookie('jwt', token, {httpOnly: true, maxAge: maxage * 1000, secure: true, sameSite: 'lax'})
-      res.status(201).json({ message: "Welcome, new user!", user, token });
+      return res.status(201).json({ message: "Welcome, new user!", user, token });
 
   } catch (err) {
       console.error("Error verifying ID token:", err.message);

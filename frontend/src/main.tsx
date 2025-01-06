@@ -1,6 +1,7 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { AuthProvider } from "./context/AuthContext";
+import { EventProvider } from "./context/EventContext"
 import { BrowserRouter as Router } from "react-router-dom"
 import './index.css'
 
@@ -10,7 +11,9 @@ createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <Router>
       <AuthProvider >
-        <App />
+        <EventProvider >
+          <App />
+        </EventProvider >
       </AuthProvider >
     </Router>
   </StrictMode>,

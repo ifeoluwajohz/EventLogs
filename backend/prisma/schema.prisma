@@ -58,7 +58,6 @@ model Event {
 
   picture          Picture?        @relation(fields: [pictureId], references: [id])
   admin            Admin @relation(fields: [adminId], references: [userId])
-
   categories       EventCategory[]
 
   @@index([adminId, title]) // Useful composite index
