@@ -34,7 +34,7 @@ const UpdateEventForm: React.FC<{ eventId: string }> = ({ eventId }) => {
   });
 
   useEffect(() => {
-    const event = events.find((e) => e.id === eventId);
+    const event = events?.find((e) => e.id === eventId);
     if (event) {
       setFormData({
         ...event,

@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useContext, useState } from "react";
 
 // Event Interface
 interface Event {
@@ -91,7 +91,7 @@ export const EventProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       }
     );
   };
-
+  
   // Create Event
   const createEvent = async (event: Event) => {
     setLoading(true);

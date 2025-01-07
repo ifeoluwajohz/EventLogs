@@ -1,9 +1,12 @@
 export interface Event {
     id: string;
+    adminId: string;
+    availableTickets: number;
     title: string;
     shortDescription: string;
-    date: string;
-    venue: string;
-    availableTickets: number;
+    longDescription: string;
     eventType: string;
+    price?: number;
+    date: string;
+    image: string;
 }

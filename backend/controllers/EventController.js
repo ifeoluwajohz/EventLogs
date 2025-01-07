@@ -67,15 +67,52 @@ const bookEvent = async (req, res) => {
                 eventId: id,
                 userId,
                 quantity,
-                totalAmount,
+                totalAmount: totalAmount | 0,
             },
         });
         res.status(201).json(booking);
     } catch (error) {
-        res.status(500).json({ error: "Failed to book event." });
+        console.log(error.message)
+        res.status(500).json({ error: error.message });
     }
 };
 
+const getAllBookedEvents = async (req, res) => {
+    try {
+        const bookedEvents = await prisma.booking.findMany({
+            include: {
+                event: true, // Include associated event details
+                user: true,  // Include user details if needed
+            },
+        });
+        res.status(200).json(bookedEvents);
+    } catch (error) {
+        console.log("Error fetching booked events:", error);
+        res.status(500).json({ error: error.message });
+    }
+};
+
+const getSingleBookedEvent = async (req, res) => {
+    const { id } = req.query; // Booking ID
+    try {
+        const booking = await prisma.booking.findUnique({
+            where: { id: parseInt(id) },
+            include: {
+                event: true, // Include associated event details
+                user: true,  // Include user details if needed
+            },
+        });
+
+        if (!booking) {
+            return res.status(404).json({ error: "Booking not found." });
+        }
+
+        res.status(200).json(booking);
+    } catch (error) {
+        console.log("Error fetching booked event:", error);
+        res.status(500).json({ error: error.message });
+    }
+};
 
 const deleteEvent = async (req, res) => {
     const { id } = req.params;
@@ -247,4 +284,6 @@ module.exports = {
     bookEvent,
     deleteEvent,
     createOrUpdateEvent,
+    getAllBookedEvents,
+    getSingleBookedEvent, // New function added here
 };

@@ -5,6 +5,7 @@ export default {
 
 
     "./src/pages/Home.tsx",
+    "./src/pages/TicketPage.tsx",
 
 
     "./src/components/Navbar.tsx",
@@ -28,6 +29,7 @@ export default {
 
     "./src/config/CreateEventForm.tsx",
     "./src/utils/UpdateEventContext.tsx",
+    
 
 
   ],

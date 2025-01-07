@@ -22,12 +22,13 @@ import SummaryPage from "./components/SummaryPage";
 
 
 import CreateEventForm from "./config/CreateEventForm"
+import TicketPage from "./pages/TicketPage"
 // import UpdateEventForm from "./config/UpdateEventForm"
 
 import EventDeatils from "./components/EventDetails"
 
 const App = () => {
-  const { user, userProfile } = useAuth();
+  const { user } = useAuth();
   // const [localUserProfile] = useState<UserProfile | null>(null);
   // https://theevent-i5i1.onrender.com
   // console.log(userProfile?.role)
@@ -49,6 +50,8 @@ const App = () => {
       <EventProvider>
         <Routes>
           <Route path="/createEvent" element={ <CreateEventForm />} />
+          <Route path="/ticket/:bookingId" element={ <TicketPage />} />
+
           {/* <Route path="/updateEvent" element={ <UpdateEventForm />} /> */}
 
         </Routes>
