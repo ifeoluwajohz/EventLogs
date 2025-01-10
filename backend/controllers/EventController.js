@@ -21,7 +21,7 @@ const getEventDetails = async (req, res) => {
         if (!event) return res.status(404).json({ error: "Event not found." });
         res.status(200).json(event);
     } catch (error) {
-        console.log(err.message)
+        console.log(error.message)
         res.status(500).json({ error: "Failed to fetch event details." });
     }
 };
