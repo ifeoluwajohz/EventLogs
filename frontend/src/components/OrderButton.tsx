@@ -16,40 +16,52 @@ const OrderButton: React.FC<OrderButtonProps> = ({ event }) => {
 
   const incrementQuantity = () => setQuantity((prev) => Math.min(prev + 1, 10)); // Max 10 tickets
   const decrementQuantity = () => setQuantity((prev) => Math.max(prev - 1, 1)); // Min 1 ticket
+  console.log(event.id)
 
   const handleReserve = async () => {
     setLoading(true);
     setMessage(null);
+    const jwt = localStorage.getItem("jwt")
 
-    try {
-      const response = await fetch(`http://localhost:5000/event/${event.id}/bookings`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("jwt")?.toString()}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          userId: userProfile?.id,
-          quantity,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to reserve tickets");
+    if(jwt){
+      try {
+      
+        const response = await fetch(`http://localhost:5000/event/${event.id}/bookings`, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("jwt")?.toString()}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            userId: userProfile?.id,
+            quantity,
+          }),
+        });
+  
+        // if (!response.ok) {
+        //   throw new Error("Failed to reserve tickets");
+        // }
+  
+        const data = await response.json();
+        console.log(data);
+        setMessage(`Successfully reserved ${quantity} tickets!`);
+  
+        // Redirect to the TicketPage with the booking ID
+        navigate(`/ticket/${data.id}`); // Using navigate to redirect
+      } catch (error) {
+        console.log(error);
+        setMessage(error instanceof Error ? error.message : "An error occurred.");
+      } finally {
+        setLoading(false);
       }
-
-      const data = await response.json();
-      console.log(data);
-      setMessage(`Successfully reserved ${quantity} tickets!`);
-
-      // Redirect to the TicketPage with the booking ID
-      navigate(`/ticket/${data.id}`); // Using navigate to redirect
-    } catch (error) {
-      console.log(error);
-      setMessage(error instanceof Error ? error.message : "An error occurred.");
-    } finally {
-      setLoading(false);
     }
+    else{
+      navigate("/login")
+      console.log("jwt is not available")
+    }
+
+
+    
   };
 
   return (

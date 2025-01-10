@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const { 
+    deleteAllBookings,
     getAllEvents, 
     getEventDetails, 
     addEventReview, 
@@ -25,13 +26,16 @@ router.post("/:id/reviews", AdminMiddleware, addEventReview); // Add a review fo
 router.get("/:id/reviews", getEventReviews); // Get reviews for a specific event
 
 
-router.get("/getBooking",UserMiddleware,getSingleBookedEvent);
-router.get("/getBookings", getAllBookedEvents);
+router.get("/:id/bookedOne",UserMiddleware, getSingleBookedEvent);
+router.get("/:id/bookedAll", UserMiddleware, getAllBookedEvents);
 router.post("/:id/bookings", UserMiddleware, bookEvent); // Book an event
+router.delete("/:id/bookedDelete", UserMiddleware, deleteAllBookings)
 
 router.delete("/delete/:id",  deleteEvent) // delete event you created
 // router.delete("/booking/:id", AdminMiddleware, deleteBooking) // delete event you created
 
 // Admin-specific routes
+
+// router.get("/sample", sampleTicket)
 
 module.exports = router;

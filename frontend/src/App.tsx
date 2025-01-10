@@ -20,7 +20,7 @@ import AdminQuestionsPage from "./components/AdminQuestionPage";
 import AttendeeQuestionsPage from "./components/AttendeeQuestionsPage";
 import SummaryPage from "./components/SummaryPage";
 
-
+import Events from "./pages/Events"
 import CreateEventForm from "./config/CreateEventForm"
 import TicketPage from "./pages/TicketPage"
 // import UpdateEventForm from "./config/UpdateEventForm"
@@ -49,8 +49,9 @@ const App = () => {
         
       <EventProvider>
         <Routes>
+          <Route path="/events" element={ <Events />} />
           <Route path="/createEvent" element={ <CreateEventForm />} />
-          <Route path="/ticket/:bookingId" element={ <TicketPage />} />
+          <Route path="/ticket/:id" element={ <TicketPage />} />
 
           {/* <Route path="/updateEvent" element={ <UpdateEventForm />} /> */}
 

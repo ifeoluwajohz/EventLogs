@@ -66,33 +66,9 @@ const loginUser = async (req, res) => {
               email: email || null,
               profilePicture: picture || null,
               role: "USER",
-              bookings: {
-                //   create: [
-                //     {
-                //         eventId: "default-event-id", // Replace with actual event ID
-                //         quantity: 1,
-                //         totalAmount: 0.0,
-                //         status: "PENDING",
-                //     },
-                //   ],
-              },
-              tickets: {
-                //   create: [
-                //       {
-                //           eventId: "default-event-id", // Replace with actual event ID
-                //           status: "AVAILABLE",
-                //       },
-                //   ],
-              },
-              reviews: {
-                //   create: [
-                //       {
-                //           eventId: "default-event-id", // Replace with actual event ID
-                //           rating: 5,
-                //           comment: "Default review",
-                //       },
-                //   ],
-              },
+              bookings: {},
+              tickets: {},
+              reviews: {},
               admin: {
                   create: {
                       createdAt: now,
@@ -179,9 +155,7 @@ const updateUser = async (req, res) => {
                 await prisma.admin.create({
                     data: { userId: id },
                 });
-                console.log("Admin privileges granted");
             } else {
-                console.log("User already has admin privileges");
             }
         } else if (newRole === "USER") {
             if (user.admin) {

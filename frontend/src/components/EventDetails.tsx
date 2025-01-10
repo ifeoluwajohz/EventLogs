@@ -12,12 +12,13 @@ const EventDetails: React.FC = () => {
   useEffect(() => {
     const fetchEvent = async () => {
       try {
-        const response = await fetch(`http://localhost:5000/event/${id}`);
+        const response = await fetch(`https://theevent-i5i1.onrender.com/event/${id}`);
         if (!response.ok) {
           throw new Error("Failed to fetch event details");
         }
         const data: Event = await response.json();
         setEvent(data);
+        console.log(data)
       } catch (err) {
         console.log(err)
         setError(err instanceof Error ? err.message : "An error occurred");

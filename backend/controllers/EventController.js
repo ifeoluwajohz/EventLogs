@@ -21,6 +21,7 @@ const getEventDetails = async (req, res) => {
         if (!event) return res.status(404).json({ error: "Event not found." });
         res.status(200).json(event);
     } catch (error) {
+        console.log(err.message)
         res.status(500).json({ error: "Failed to fetch event details." });
     }
 };
@@ -78,8 +79,10 @@ const bookEvent = async (req, res) => {
 };
 
 const getAllBookedEvents = async (req, res) => {
+    const { id } = req.params;
     try {
         const bookedEvents = await prisma.booking.findMany({
+            where: {userId : id},
             include: {
                 event: true, // Include associated event details
                 user: true,  // Include user details if needed
@@ -92,14 +95,16 @@ const getAllBookedEvents = async (req, res) => {
     }
 };
 
+
 const getSingleBookedEvent = async (req, res) => {
-    const { id } = req.query; // Booking ID
+    const { id } = req.params; // Booking ID
+
     try {
         const booking = await prisma.booking.findUnique({
-            where: { id: parseInt(id) },
+            where: { id: id }, // Adjust the field name if needed
             include: {
-                event: true, // Include associated event details
-                user: true,  // Include user details if needed
+                event: true, // Update to match your Prisma schema
+                user: true,  // Update to match your Prisma schema
             },
         });
 
@@ -108,11 +113,27 @@ const getSingleBookedEvent = async (req, res) => {
         }
 
         res.status(200).json(booking);
+        console.log(id)
     } catch (error) {
-        console.log("Error fetching booked event:", error);
+        console.error("Error fetching booking:", error); // Log the full error
+        res.status(500).json({ error: "Internal server error." });
+    }
+};
+
+const deleteAllBookings = async (req, res) => {
+    const { id } = req.params; // User ID
+    try {
+        await prisma.booking.deleteMany({
+            where: { userId: id },
+        });
+        res.status(200).json({ message: "All bookings deleted successfully." });
+    } catch (error) {
+        console.error("Error deleting bookings:", error);
         res.status(500).json({ error: error.message });
     }
 };
+
+
 
 const deleteEvent = async (req, res) => {
     const { id } = req.params;
@@ -274,9 +295,19 @@ const createOrUpdateEvent = async (req, res) => {
 //     }
 // };
 
+const sampleTicket = async (req, res) => {
+    try{
+        console.log(req.body)
+        console.log(req.query)
+    }catch(err){
+        console.log(err.message)
+    }
+}
+
 
 
 module.exports = {
+    sampleTicket,
     getAllEvents,
     getEventDetails,
     addEventReview,
@@ -286,4 +317,5 @@ module.exports = {
     createOrUpdateEvent,
     getAllBookedEvents,
     getSingleBookedEvent, // New function added here
+    deleteAllBookings,
 };

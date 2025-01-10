@@ -27,6 +27,8 @@ export default {
     "./src/utils/AccountPage.tsx",
     "./src/utils/AccountConfig.tsx",
 
+
+    "./src/pages/Events.tsx",
     "./src/config/CreateEventForm.tsx",
     "./src/utils/UpdateEventContext.tsx",
     
