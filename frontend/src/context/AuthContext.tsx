@@ -51,8 +51,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const token = localStorage.getItem("jwt");
 
 
-  // const API_URL = "http://localhost:5000";
-  const API_URL = "http://localhost:5000"
+  // const API_URL = "https://theevent-i5i1.onrender.com";
+  const API_URL = "https://theevent-i5i1.onrender.com"
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
@@ -91,7 +91,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       // }
 
       const data = await response.json();
-      console.log(data)
+      // console.log(data)
       setUserProfile(data.user);
     } catch (error) {
       console.error("Error fetching profile:", error);
@@ -115,7 +115,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   
       const data = await response.json();
       setUserProfile(data.data); // Update the user profile in the context
-      console.log("User profile updated successfully", data);
+      // console.log("User profile updated successfully", data);
     } catch (error) {
       if (error instanceof Error) {
         console.log(error.message); // Safely access the error message

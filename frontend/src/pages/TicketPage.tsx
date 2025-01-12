@@ -7,13 +7,12 @@ const TicketPage: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
-  console.log("Booking ID:", id);
 
   useEffect(() => {
     const fetchBookingData = async () => {
       try {
         const response = await fetch(
-          `http://localhost:5000/event/${id}/bookedOne`, // Adjusted fetch URL
+          `https://theevent-i5i1.onrender.com/event/${id}/bookedOne`, // Adjusted fetch URL
           {
             method: "GET",
             headers: {
@@ -28,7 +27,6 @@ const TicketPage: React.FC = () => {
         }
 
         const data = await response.json();
-        console.log("Fetched Data:", data);
         setBookingData(data);
       } catch (error) {
         console.error(error);

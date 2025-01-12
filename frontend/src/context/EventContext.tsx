@@ -43,8 +43,8 @@ export const EventProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const token = localStorage.getItem("jwt");
 
   // API Base URL
-  // const API_URL = "http://localhost:5000";
-  const API_URL = "http://localhost:5000"
+  // const API_URL = "https://theevent-i5i1.onrender.com";
+  const API_URL = "https://theevent-i5i1.onrender.com"
 
   // Fetch Events by Location
   const fetchEventsByLocation = async (searchLocation: string) => {

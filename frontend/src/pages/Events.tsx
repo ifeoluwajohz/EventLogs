@@ -30,7 +30,7 @@ const Events: React.FC = () => {
 
     try {
       const response = await fetch(
-        `http://localhost:5000/event/${userProfile.id}/bookedAll`,
+        `https://theevent-i5i1.onrender.com/event/${userProfile.id}/bookedAll`,
         {
           method: "GET",
           headers: {
@@ -45,7 +45,6 @@ const Events: React.FC = () => {
       }
 
       const data = await response.json();
-      console.log(data)
       setBookings(data);
     } catch (error) {
       console.error(error);
@@ -63,7 +62,7 @@ const Events: React.FC = () => {
 
     try {
       const response = await fetch(
-        `http://localhost:5000/event/${userProfile.id}/bookedDelete`,
+        `https://theevent-i5i1.onrender.com/event/${userProfile.id}/bookedDelete`,
         {
           method: "DELETE",
           headers: {
