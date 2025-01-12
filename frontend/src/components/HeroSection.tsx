@@ -15,9 +15,10 @@ const HeroSection: React.FC = () => {
 
   useEffect(() => {
     // const handleSearch = () => {
-      if (location.trim()) {
+      if (location.trim() >= "") {
         fetchEventsByLocation(location);
       }
+      
     // };
   }, [location])
 

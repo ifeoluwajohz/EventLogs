@@ -13,7 +13,7 @@ const TicketPage: React.FC = () => {
     const fetchBookingData = async () => {
       try {
         const response = await fetch(
-          `https://theevent-i5i1.onrender.com/event/${id}/bookedOne`, // Adjusted fetch URL
+          `http://localhost:5000/event/${id}/bookedOne`, // Adjusted fetch URL
           {
             method: "GET",
             headers: {

@@ -1,5 +1,5 @@
 import Carousel from '../components/Carousel'
-import EventSearchByLocation from '../components/EventSearchByLocation'
+// import EventSearchByLocation from '../components/EventSearchByLocation'
 import HeroSection from '../components/HeroSection'
 
 const Home = () => {
@@ -7,7 +7,7 @@ const Home = () => {
     <div className='text-center'>
       <HeroSection />
       <Carousel />
-      <EventSearchByLocation />
+      {/* <EventSearchByLocation /> */}
     </div>
   )
 }

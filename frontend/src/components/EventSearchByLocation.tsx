@@ -25,7 +25,7 @@ const EventSearchByLocation: React.FC = () => {
 
         try {
             const response = await fetch(
-                `https://theevent-i5i1.onrender.com/search/byLocation/?location=${searchLocation}`
+                `http://localhost:5000/search/byLocation/?location=${searchLocation}`
             );
             const data: Event[] = await response.json();
             setEvents(data);

@@ -30,7 +30,7 @@ import EventDeatils from "./components/EventDetails"
 const App = () => {
   const { user } = useAuth();
   // const [localUserProfile] = useState<UserProfile | null>(null);
-  // https://theevent-i5i1.onrender.com
+  // http://localhost:5000
   // console.log(userProfile?.role)
   // http://localhost:5000
 

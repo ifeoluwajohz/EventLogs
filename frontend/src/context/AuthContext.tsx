@@ -51,8 +51,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const token = localStorage.getItem("jwt");
 
 
-  // const API_URL = "https://theevent-i5i1.onrender.com";
-  const API_URL = "https://theevent-i5i1.onrender.com"
+  // const API_URL = "http://localhost:5000";
+  const API_URL = "http://localhost:5000"
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
@@ -84,11 +84,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         },
       });
 
-      if (!response.ok) {
-        localStorage.removeItem('jwt')
-        console.log("jwt is wrong")
-        // throw new Error("Failed to fetch profile");
-      }
+      // if (!response.ok) {
+      //   localStorage.removeItem('jwt')
+      //   console.log("jwt is wrong")
+      //   // throw new Error("Failed to fetch profile");
+      // }
 
       const data = await response.json();
       console.log(data)
