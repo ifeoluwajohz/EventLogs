@@ -118,17 +118,17 @@ const AccountPage: React.FC = () => {
             >
               Edit Your Profile
             </p>
-            <p className="my-4">
+            {/* <p className="my-4">
             <Link 
-            to={userProfile?.role.toString() !== "USER" ? "/admin-questions" : '/attendee-questions'}
+            to={userProfile?.role.toString() !== "USER" ? "/createEvent" : '/attendee-questions'}
               className="text-blue-600 hover:text-blue-700 cursor-pointer"
             >
               Manage Events
             </Link>
-            </p>
-            <p>
-              <Link to="/events" className="text-blue-600 hover:text-blue-700 cursor-pointer">
-              View Tickets
+            </p> */}
+            <p className="mt-4">
+              <Link to="/tickets" className="text-blue-600 hover:text-blue-700 cursor-pointer">
+              Manage Events
               </Link>
             </p>
           </div>

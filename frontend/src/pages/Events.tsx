@@ -88,7 +88,9 @@ const Events: React.FC = () => {
     fetchBookings();
   }, [userProfile]);
 
-  if (loading) return <div className="text-center py-10">Loading events...</div>;
+  if (loading) return <div className="flex justify-center items-center h-screen">
+  <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-blue-500"></div>
+</div>;
   if (error) return <div className="text-center text-red-500 py-10">{error}</div>;
 
   return (

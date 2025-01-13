@@ -60,7 +60,7 @@ model Event {
   admin            Admin @relation(fields: [adminId], references: [userId])
   categories       EventCategory[]
 
-  @@index([adminId, title]) // Useful composite index
+  @@index([adminId, title, date, venue, shortDescription]) // Useful composite index
 }
 
 model EventReview {

@@ -22,9 +22,6 @@ const HeroSection: React.FC = () => {
     // };
   }, [location])
 
-  
-  
-
   return (
     <div className="h-full py-8 mb-10 flex flex-col items-center px-4">
       <div className="text-center mt-10 md:mt-20">

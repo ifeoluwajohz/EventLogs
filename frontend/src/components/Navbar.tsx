@@ -51,14 +51,17 @@ const Navbar: React.FC = () => {
         {/* Currency and Language Select */}
         <div className="hidden md:flex gap-4 items-center">
           
-          <div className="flex px-4 gap-1">
+          <div  className="flex px-4 gap-1">
             <img
+            
               className="w-5 h-5"
               src="https://img.icons8.com/?size=100&id=7819&format=png&color=000000"
               alt="Currency Icon"
             />
             { 
-              <Link to='/accountConfig'>Dashboard</Link>
+              <Link onClick={() => {
+                setIsMenuOpen(false);
+              }} to='/accountConfig'>Dashboard</Link>
             }
           </div>
         </div>
@@ -76,6 +79,9 @@ const Navbar: React.FC = () => {
               <a
                 key={link}
                 href="#"
+                onClick={() => {
+                  setIsMenuOpen(false);
+                }}
                 className="text-gray-600 hover:text-gray-800 transition-colors"
               >
                 {link}

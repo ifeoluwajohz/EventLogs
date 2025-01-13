@@ -5,13 +5,17 @@ const prisma = new PrismaClient();
 const searchEventsByLocation = async (req, res) => {
     const { location } = req.query;
 
-    if (!location) {
-        return res.status(400).json({ error: "Location parameter is required." });
+    if (!location ) {
+        return res.status(400).json({ error: "Location and Title parameter is required." });
     }
 
     try {
         const events = await prisma.event.findMany({
             where: {
+                title: {
+                    contains: location,
+                    mode: "insensitive", // Case-insensitive search
+                },
                 venue: {
                     contains: location,
                     mode: "insensitive", // Case-insensitive search

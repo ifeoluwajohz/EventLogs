@@ -29,6 +29,7 @@ export default {
 
 
     "./src/pages/Events.tsx",
+    "./src/pages/TicketManagement.tsx",
     "./src/config/CreateEventForm.tsx",
     "./src/utils/UpdateEventContext.tsx",
     

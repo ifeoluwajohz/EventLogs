@@ -22,7 +22,7 @@ const getEventDetails = async (req, res) => {
         res.status(200).json(event);
     } catch (error) {
         console.log(error.message)
-        res.status(500).json({ error: "Failed to fetch event details." });
+        res.status(500).json({ error: error.message });
     }
 };
 
@@ -95,7 +95,6 @@ const getAllBookedEvents = async (req, res) => {
     }
 };
 
-
 const getSingleBookedEvent = async (req, res) => {
     const { id } = req.params; // Booking ID
 
@@ -133,8 +132,6 @@ const deleteAllBookings = async (req, res) => {
     }
 };
 
-
-
 const deleteEvent = async (req, res) => {
     const { id } = req.params;
     try {
@@ -147,7 +144,6 @@ const deleteEvent = async (req, res) => {
         res.status(500).json({ error: "Failed to Event booking." });
     }
 };
-
 
 // Create or update an event (Admin only)
 const createOrUpdateEvent = async (req, res) => {
