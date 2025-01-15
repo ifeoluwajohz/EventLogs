@@ -26,7 +26,7 @@ const OrderButton: React.FC<OrderButtonProps> = ({ event }) => {
     if(jwt){
       try {
       
-        const response = await fetch(`http://localhost:5000/event/${event.id}/bookings`, {
+        const response = await fetch(`https://theevent-i5i1.onrender.com/event/${event.id}/bookings`, {
           method: "POST",
           headers: {
             Authorization: `Bearer ${localStorage.getItem("jwt")?.toString()}`,

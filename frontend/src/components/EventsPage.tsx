@@ -22,7 +22,7 @@ const EventsPage: React.FC = () => {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const response = await fetch(`http://localhost:5000/search/events/?location=${location}`);
+        const response = await fetch(`https://theevent-i5i1.onrender.com/search/events/?location=${location}`);
         if (!response.ok) {
           throw new Error("Failed to fetch events");
         }
