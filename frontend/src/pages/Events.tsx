@@ -30,7 +30,7 @@ const Events: React.FC = () => {
 
     try {
       const response = await fetch(
-        `https://theevent-i5i1.onrender.com/event/${userProfile.id}/bookedAll`,
+        `http://localhost:5000/event/${userProfile.id}/bookedAll`,
         {
           method: "GET",
           headers: {
@@ -62,7 +62,7 @@ const Events: React.FC = () => {
 
     try {
       const response = await fetch(
-        `https://theevent-i5i1.onrender.com/event/${userProfile.id}/bookedDelete`,
+        `http://localhost:5000/event/${userProfile.id}/bookedDelete`,
         {
           method: "DELETE",
           headers: {

@@ -1,12 +1,13 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { carouselData } from "../data/CarouselData";
 
 const MAX_VISIBLE_SLIDES = 9;
 
 const Carousel: React.FC = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const navigate = useNavigate();
 
-  // Filter to include only the first 9 items
   const visibleData = carouselData.slice(0, MAX_VISIBLE_SLIDES);
 
   const handlePrev = () => {
@@ -21,9 +22,12 @@ const Carousel: React.FC = () => {
     );
   };
 
+  const handleImageClick = (location: string) => {
+    navigate(`/EventsPage/${location}`);
+  };
+
   return (
     <div className="relative w-full py-10 px-4 sm:px-6 overflow-hidden">
-      {/* Carousel Container */}
       <div className="flex transition-transform duration-500 ease-in-out">
         {visibleData.map((item, index) => (
           <div
@@ -35,7 +39,10 @@ const Carousel: React.FC = () => {
               transform: `translateX(-${currentIndex * 100}%)`,
             }}
           >
-            <div className="mx-2 rounded-lg overflow-hidden bg-white">
+            <div
+              className="mx-2 rounded-lg overflow-hidden bg-white cursor-pointer"
+              onClick={() => handleImageClick(item.title)}
+            >
               <img
                 src={item.image || "/images/fallback.jpg"}
                 alt={item.title || "Carousel image"}
@@ -50,7 +57,6 @@ const Carousel: React.FC = () => {
         ))}
       </div>
 
-      {/* Navigation Buttons */}
       <button
         onClick={handlePrev}
         className="absolute top-1/2 left-0 transform -translate-y-1/2 bg-gray-800 text-white p-2 rounded-full hover:bg-gray-700"

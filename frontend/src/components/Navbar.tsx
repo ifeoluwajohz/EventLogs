@@ -9,7 +9,7 @@ const Navbar: React.FC = () => {
     <nav className="w-full bg-white shadow-md">
       <div className="flex justify-between items-center py-4 px-6 max-w-6xl mx-auto">
         <Link to="/" >
-        <h1 className="text-2xl font-bold text-gray-800">Bounce</h1>
+        <h1 className="text-2xl font-bold text-gray-800">The Event</h1>
         </Link>
         {/* Hamburger Menu Icon for Mobile */}
         <button

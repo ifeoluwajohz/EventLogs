@@ -1,8 +1,9 @@
 const express = require("express");
 const router = express.Router();
-const { searchEventsByLocation } = require("../controllers/searchController");
+const { searchEventsByLocation, searchEventsByKeywords } = require("../controllers/searchController");
 
-router.get("/byLocation/", searchEventsByLocation);
+router.get("/byLocation/", searchEventsByKeywords);
+router.get("/events/", searchEventsByLocation)
 
 
 module.exports = router;

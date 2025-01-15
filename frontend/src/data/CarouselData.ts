@@ -8,7 +8,7 @@ export const carouselData = [
   {
     id: 2,
     image: "https://plus.unsplash.com/premium_photo-1724753996112-f5418fb61aad?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    title: "Paris",
+    title: "Dubai",
     locations: 300,
   },
   {
