@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom"; // Use useNavigate instead of useHistory
+import { useNavigate } from "react-router-dom";
 import { Event } from "../types/Event";
 import { useAuth } from "../context/AuthContext";
 
@@ -12,56 +12,45 @@ const OrderButton: React.FC<OrderButtonProps> = ({ event }) => {
   const [quantity, setQuantity] = useState(1);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
-  const navigate = useNavigate(); // Create navigate function
+  const navigate = useNavigate();
+  const API_URL = import.meta.env.VITE_REACT_APP_API_KEY;
 
-  const incrementQuantity = () => setQuantity((prev) => Math.min(prev + 1, 10)); // Max 10 tickets
-  const decrementQuantity = () => setQuantity((prev) => Math.max(prev - 1, 1)); // Min 1 ticket
-  console.log(event.id)
+  const isEventStarted = new Date(event.date).getTime() < new Date().getTime();
+  const isSoldOut = event.availableTickets <= 0;
+
+  const incrementQuantity = () =>
+    setQuantity((prev) => Math.min(prev + 1, event.availableTickets)); // Max is available tickets
+
+  const decrementQuantity = () => setQuantity((prev) => Math.max(prev - 1, 1)); // Min is 1
 
   const handleReserve = async () => {
+    if (isEventStarted || isSoldOut) return; // Prevent clicking when disabled
     setLoading(true);
     setMessage(null);
-    const jwt = localStorage.getItem("jwt")
+    const jwt = localStorage.getItem("jwt");
 
-    if(jwt){
+    if (jwt) {
       try {
-      
-        const response = await fetch(`https://theevent-i5i1.onrender.com/event/${event.id}/bookings`, {
+        const response = await fetch(`${API_URL}/event/${event.id}/bookings`, {
           method: "POST",
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("jwt")?.toString()}`,
+            Authorization: `Bearer ${jwt}`,
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({
-            userId: userProfile?.id,
-            quantity,
-          }),
+          body: JSON.stringify({ userId: userProfile?.id, quantity }),
         });
-  
-        // if (!response.ok) {
-        //   throw new Error("Failed to reserve tickets");
-        // }
-  
+
         const data = await response.json();
-        console.log(data);
-        setMessage(`Successfully reserved ${quantity} tickets!`);
-  
-        // Redirect to the TicketPage with the booking ID
-        navigate(`/ticket/${data.id}`); // Using navigate to redirect
+        setMessage(`Successfully reserved ${quantity} ticket(s)!`);
+        navigate(`/ticket/${data.id}`);
       } catch (error) {
-        console.log(error);
         setMessage(error instanceof Error ? error.message : "An error occurred.");
       } finally {
         setLoading(false);
       }
+    } else {
+      navigate("/login");
     }
-    else{
-      navigate("/login")
-      console.log("jwt is not available")
-    }
-
-
-    
   };
 
   return (
@@ -74,15 +63,17 @@ const OrderButton: React.FC<OrderButtonProps> = ({ event }) => {
       {/* Quantity Selector */}
       <div className="flex items-center mb-4">
         <button
-          className="px-3 py-1 bg-gray-200 text-gray-700 rounded-l-md focus:outline-none hover:bg-gray-300"
+          className="px-3 py-1 bg-gray-200 text-gray-700 rounded-l-md focus:outline-none hover:bg-gray-300 disabled:opacity-50"
           onClick={decrementQuantity}
+          disabled={quantity === 1}
         >
           -
         </button>
         <span className="px-4 py-1 border-t border-b">{quantity}</span>
         <button
-          className="px-3 py-1 bg-gray-200 text-gray-700 rounded-r-md focus:outline-none hover:bg-gray-300"
+          className="px-3 py-1 bg-gray-200 text-gray-700 rounded-r-md focus:outline-none hover:bg-gray-300 disabled:opacity-50"
           onClick={incrementQuantity}
+          disabled={quantity >= event.availableTickets} // Disable if quantity reaches available tickets
         >
           +
         </button>
@@ -91,14 +82,14 @@ const OrderButton: React.FC<OrderButtonProps> = ({ event }) => {
       {/* Reserve Button */}
       <button
         onClick={handleReserve}
-        disabled={loading}
+        disabled={loading || isEventStarted || isSoldOut}
         className={`w-full py-2 font-semibold rounded-md focus:outline-none ${
-          loading
+          loading || isEventStarted || isSoldOut
             ? "bg-gray-400 text-gray-200 cursor-not-allowed"
             : "bg-blue-600 text-white hover:bg-blue-700"
         }`}
       >
-        {loading ? "Processing..." : "Reserve a Spot"}
+        {isEventStarted ? "Event Started" : isSoldOut ? "Sold Out" : loading ? "Processing..." : "Reserve a Spot"}
       </button>
 
       {/* Status Message */}

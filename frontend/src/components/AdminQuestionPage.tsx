@@ -37,18 +37,18 @@ const AdminQuestionsPage: React.FC = () => {
 
   const [categories, setCategories] = useState<string[]>([]);
 
-  useEffect(() => {
-    async function fetchCategories() {
-      try {
-        const response = await fetch("/api/categories");
-        const data = await response.json();
-        setCategories(data.categories || []);
-      } catch (error) {
-        console.error("Error fetching categories:", error);
-      }
-    }
-    fetchCategories();
-  }, []);
+  // useEffect(() => {
+  //   async function fetchCategories() {
+  //     try {
+  //       const response = await fetch("/api/categories");
+  //       const data = await response.json();
+  //       setCategories(data.categories || []);
+  //     } catch (error) {
+  //       console.error("Error fetching categories:", error);
+  //     }
+  //   }
+  //   fetchCategories();
+  // }, []);
 
   // UseRef to keep track of previous formData values
   const prevFormData = React.useRef(formData);
@@ -117,6 +117,7 @@ const AdminQuestionsPage: React.FC = () => {
               value={formData.longDescription}
               onChange={handleChange}
               placeholder="Enter a detailed description"
+              required
               rows={4}
               className="px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
             />

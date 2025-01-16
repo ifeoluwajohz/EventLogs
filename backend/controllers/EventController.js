@@ -62,21 +62,47 @@ const getEventReviews = async (req, res) => {
 const bookEvent = async (req, res) => {
     const { id } = req.params;
     const { userId, quantity, totalAmount } = req.body;
+
     try {
+        // Fetch the event to check available tickets
+        const event = await prisma.event.findUnique({
+            where: { id },
+            select: { availableTickets: true }
+        });
+
+        if (!event) {
+            return res.status(404).json({ error: "Event not found" });
+        }
+
+        if (event.availableTickets < quantity) {
+            return res.status(400).json({ error: "Not enough tickets available" });
+        }
+
+        // Create the booking
         const booking = await prisma.booking.create({
             data: {
                 eventId: id,
                 userId,
                 quantity,
-                totalAmount: totalAmount | 0,
-            },
+                totalAmount: totalAmount || 0
+            }
         });
+
+        // Update the available tickets
+        await prisma.event.update({
+            where: { id },
+            data: {
+                availableTickets: event.availableTickets - quantity
+            }
+        });
+
         res.status(201).json(booking);
     } catch (error) {
-        console.log(error.message)
+        console.error(error.message);
         res.status(500).json({ error: error.message });
     }
 };
+
 
 const getAllBookedEvents = async (req, res) => {
     const { id } = req.params;
@@ -119,6 +145,41 @@ const getSingleBookedEvent = async (req, res) => {
     }
 };
 
+// Delete a single booked ticket
+const deleteBooking = async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        const booking = await prisma.booking.findUnique({
+            where: { id },
+        });
+
+        if (!booking) {
+            return res.status(404).json({ error: "Booking not found" });
+        }
+
+        // Delete the booking
+        await prisma.booking.delete({
+            where: { id },
+        });
+
+        // Update the available tickets count
+        await prisma.event.update({
+            where: { id: booking.eventId },
+            data: {
+                availableTickets: {
+                    increment: booking.quantity, // Restore the canceled tickets
+                },
+            },
+        });
+
+        res.json({ message: "Booking deleted successfully" });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: error.message });
+    }
+}
+
 const deleteAllBookings = async (req, res) => {
     const { id } = req.params; // User ID
     try {
@@ -156,6 +217,7 @@ const createOrUpdateEvent = async (req, res) => {
         venue,
         eventType = "FREE",
         price,
+        capacity,
         availableTickets,
         // pictureId = "https://chatgpt.com/c/6773b291-158c-8001-a144-d6d48086a84b",
         categoryIds, // Array of category IDs
@@ -182,6 +244,7 @@ const createOrUpdateEvent = async (req, res) => {
                 venue,
                 eventType,
                 price: eventType === "PAID" ? parseFloat(price) : null,
+                capacity: parseInt(capacity, 10),
                 availableTickets: parseInt(availableTickets, 10),
                 admin: {
                     connect: { userId: id }, // Connect Admin by userId
@@ -207,103 +270,7 @@ const createOrUpdateEvent = async (req, res) => {
 };
 
 
-
-
-// const createOrUpdateEvent = async (req, res) => {
-//     // const { id } = req.params;
-//     const  {id}  = req.admin;
-//     const {
-//         title,
-//         shortDescription,
-//         longDescription,
-//         date,
-//         venue,
-//         eventType,
-//         price,
-//         availableTickets,
-//         admin,
-//         pictureId,
-//         categories,
-//     } = req.body;
-
-//     try {
-//         // Validate required fields
-//         if(id){
-//             console.log(id)
-//         }
-//         if (!title || !date || !price || !admin) {
-//             return res.status(400).json({ error: "Missing required fields." });
-//         }
-
-//         // Parse and validate date
-//         const parsedDate = new Date(date);
-//         if (isNaN(parsedDate)) {
-//             return res.status(400).json({ error: "Invalid date format." });
-//         }
-
-//         let event;
-//         if (id) {
-//             // Update event
-//             event = await prisma.event.update({
-//                 where: { id },
-//                 data: {
-//                     title,
-//                     shortDescription,
-//                     longDescription,
-//                     date: parsedDate,
-//                     venue,
-//                     eventType,
-//                     price,
-//                     availableTickets,
-//                     admin,
-//                     picture: { connect: { id: pictureId } },
-//                     categories: {
-//                         connect: categories.map((categoryId) => ({ id: categoryId })),
-//                     },
-//                 },
-//             });
-//         } else {
-//             // Create new event
-//             event = await prisma.event.create({
-//                 data: {
-//                     title,
-//                     shortDescription,
-//                     longDescription,
-//                     date: parsedDate,
-//                     venue,
-//                     eventType,
-//                     price,
-//                     availableTickets,
-//                     admin,
-//                     picture: { connect: { id: pictureId } },
-//                     categories: {
-//                         connect: categories.map((categoryId) => ({ id: categoryId })),
-//                     },
-//                 },
-//             });
-//         }
-
-//         res.status(200).json(event);
-//         console.log(event)
-//     } catch (error) {
-//         console.log("Error in createOrUpdateEvent:", error);
-//         res.status(500).json({ error: error.message });
-//     }
-// };
-
-const sampleTicket = async (req, res) => {
-    try{
-        console.log(req.body)
-        console.log(req.query)
-    }catch(err){
-        console.log(err.message)
-    }
-}
-
-
-
 module.exports = {
-    sampleTicket,
     getAllEvents,
     getEventDetails,
     addEventReview,
@@ -313,5 +280,6 @@ module.exports = {
     createOrUpdateEvent,
     getAllBookedEvents,
     getSingleBookedEvent, // New function added here
+    deleteBooking,
     deleteAllBookings,
 };

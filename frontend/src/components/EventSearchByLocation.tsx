@@ -11,6 +11,7 @@ interface Event {
     availableTickets: number;
     eventType: string;
 }
+const API_URL = import.meta.env.VITE_REACT_APP_API_KEY;
 
 const EventSearchByLocation: React.FC = () => {
     const { userProfile } = useAuth();
@@ -25,7 +26,7 @@ const EventSearchByLocation: React.FC = () => {
 
         try {
             const response = await fetch(
-                `https://theevent-i5i1.onrender.com/search/byLocation/?location=${searchLocation}`
+                `${API_URL}/search/byLocation/?location=${searchLocation}`
             );
             const data: Event[] = await response.json();
             setEvents(data);

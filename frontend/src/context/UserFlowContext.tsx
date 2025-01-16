@@ -1,5 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { useAuth } from "./AuthContext"; // Adjust the path as needed
+import { useNavigate } from "react-router-dom"
+const API_URL = import.meta.env.VITE_REACT_APP_API_KEY;
 
 interface UserFlowState {
   idToken: string | null;
@@ -42,6 +44,7 @@ const UserFlowContext = createContext<UserFlowContextProps | undefined>(
 export const UserFlowProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { userProfile } = useAuth();
   const [state, setState] = useState<UserFlowState>(initialState);
+  const navigate = useNavigate();
 
   // const storedToken = localStorage.getItem("jwt");
 
@@ -98,7 +101,7 @@ export const UserFlowProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
   const syncWithBackend = async (): Promise<void> => {
     try {
-      const response = await fetch("https://theevent-i5i1.onrender.com/event/create", {
+      const response = await fetch(`${API_URL}/event/create`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${localStorage.getItem("jwt")?.toString()}`,
@@ -107,9 +110,10 @@ export const UserFlowProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         body: JSON.stringify(state.event),
       });
 
-      console.log(localStorage.getItem("jwt"))
+      // console.log(localStorage.getItem("jwt"))
       const data = await response.json();
-      console.log(data, "data")
+      navigate(`/event/${data.id}`)
+      // console.log(data.id)
     } catch (error) {
       if (error instanceof Error) {
         console.log(error.message); // Safely access the error message

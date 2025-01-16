@@ -43,8 +43,7 @@ export const EventProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const token = localStorage.getItem("jwt");
 
   // API Base URL
-  // const API_URL = "https://theevent-i5i1.onrender.com https://theevent-i5i1.onrender.com";
-  const API_URL = "https://theevent-i5i1.onrender.com"
+  const API_URL = import.meta.env.VITE_REACT_APP_API_KEY;
 
   // Fetch Events by Location
   const fetchEventsByLocation = async (searchLocation: string) => {
@@ -108,6 +107,7 @@ export const EventProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       });
       const newEvent = await response.json();
       setEvents((prev) => (prev ? [...prev, newEvent] : [newEvent]));
+      console.log(newEvent)
     } catch (err: any) {
       setError("Error creating event");
     } finally {

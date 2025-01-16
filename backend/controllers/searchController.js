@@ -4,7 +4,7 @@ const prisma = new PrismaClient();
 // Search Events by User Location
 const searchEventsByKeywords = async (req, res) => {
     const { location } = req.query;
-
+    console.log("requesting...")
     if (!location ) {
         return res.status(400).json({ error: "Location and Title parameter is required." });
     }

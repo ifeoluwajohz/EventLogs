@@ -18,11 +18,12 @@ const EventsPage: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [eventsPerPage] = useState<number>(5); // Number of events per page
+  const API_URL = import.meta.env.VITE_REACT_APP_API_KEY;
 
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const response = await fetch(`https://theevent-i5i1.onrender.com/search/events/?location=${location}`);
+        const response = await fetch(`${API_URL}/search/events/?location=${location}`);
         if (!response.ok) {
           throw new Error("Failed to fetch events");
         }

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
+const API_URL = import.meta.env.VITE_REACT_APP_API_KEY;
 
 interface Booking {
   id: string;
@@ -30,7 +31,7 @@ const Events: React.FC = () => {
 
     try {
       const response = await fetch(
-        `https://theevent-i5i1.onrender.com/event/${userProfile.id}/bookedAll`,
+        `${API_URL}/event/${userProfile.id}/bookedAll`,
         {
           method: "GET",
           headers: {
@@ -62,7 +63,7 @@ const Events: React.FC = () => {
 
     try {
       const response = await fetch(
-        `https://theevent-i5i1.onrender.com/event/${userProfile.id}/bookedDelete`,
+        `${API_URL}/event/${userProfile.id}/bookedDelete`,
         {
           method: "DELETE",
           headers: {

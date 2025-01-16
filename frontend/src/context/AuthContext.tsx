@@ -51,8 +51,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const token = localStorage.getItem("jwt");
 
 
-  // const API_URL = "https://theevent-i5i1.onrender.com https://theevent-i5i1.onrender.com";
-  const API_URL = "https://theevent-i5i1.onrender.com"
+  const API_URL = import.meta.env.VITE_REACT_APP_API_KEY;
+  console.log(API_URL)
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
