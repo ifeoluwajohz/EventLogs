@@ -58,7 +58,9 @@ const EventDetails: React.FC = () => {
     return () => clearInterval(interval);
   }, [event]);
 
-  if (loading) return <p>Loading...</p>;
+  if (loading) return <div className="flex justify-center items-center h-screen">
+  <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-blue-500"></div>
+</div>;
   if (error) return <p className="text-red-500">{error}</p>;
   if (!event) return <p>Event not found</p>;
 

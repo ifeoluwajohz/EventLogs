@@ -52,7 +52,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
 
   const API_URL = import.meta.env.VITE_REACT_APP_API_KEY;
-  console.log(API_URL)
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {

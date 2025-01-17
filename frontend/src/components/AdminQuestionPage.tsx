@@ -37,18 +37,6 @@ const AdminQuestionsPage: React.FC = () => {
 
   const [categories, setCategories] = useState<string[]>([]);
 
-  // useEffect(() => {
-  //   async function fetchCategories() {
-  //     try {
-  //       const response = await fetch("/api/categories");
-  //       const data = await response.json();
-  //       setCategories(data.categories || []);
-  //     } catch (error) {
-  //       console.error("Error fetching categories:", error);
-  //     }
-  //   }
-  //   fetchCategories();
-  // }, []);
 
   // UseRef to keep track of previous formData values
   const prevFormData = React.useRef(formData);

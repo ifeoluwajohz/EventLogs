@@ -138,7 +138,6 @@ const getSingleBookedEvent = async (req, res) => {
         }
 
         res.status(200).json(booking);
-        console.log(id)
     } catch (error) {
         console.error("Error fetching booking:", error); // Log the full error
         res.status(500).json({ error: "Internal server error." });
