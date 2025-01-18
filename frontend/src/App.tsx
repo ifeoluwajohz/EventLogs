@@ -9,7 +9,7 @@ import { useAuth } from './context/AuthContext'
 import Home from "./pages/Home"
 import Navbar from "./components/Navbar"
 
-
+import ProfilePage from './utils/ProfilePage'
 import AccountPage from './utils/AccountPage'
 import AccountConfig from './utils/AccountConfig'
 
@@ -31,10 +31,6 @@ import EventDeatils from "./components/EventDetails"
 
 const App = () => {
   const { user } = useAuth();
-  // const [localUserProfile] = useState<UserProfile | null>(null);
-  // https://theevent-i5i1.onrender.com https://theevent-i5i1.onrender.com
-  // console.log(userProfile?.role)
-  // https://theevent-i5i1.onrender.com https://theevent-i5i1.onrender.com
 
   return (
     <>
@@ -47,6 +43,7 @@ const App = () => {
         <Routes>
           <Route path='/login' element={!user ? <AccountConfig /> : <Home/>} />
           <Route path='/accountconfig' element={ <AccountPage /> } />
+          <Route path='/profile' element={<ProfilePage />} />
         </Routes>
         
       {/* <EventProvider> */}

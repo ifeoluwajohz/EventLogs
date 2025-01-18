@@ -1,42 +1,91 @@
-import React from "react";
-import { useNavigate } from "react-router-dom"; // Import for navigation
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useUserFlow } from "../context/UserFlowContext";
+import { FaArrowLeft, FaCheckCircle } from "react-icons/fa";
 
 const SummaryPage: React.FC = () => {
   const { state, syncWithBackend } = useUserFlow();
-  const navigate = useNavigate(); // Initialize navigation
+  const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleGoBack = () => {
-    navigate(-1); // Navigate to the previous page
-  };
+  const handleGoBack = () => navigate(-1);
 
   const handleSubmit = async () => {
-    syncWithBackend()
+    setIsLoading(true);
+    try {
+      await syncWithBackend();
+    } catch (error) {
+      console.error("Submission failed:", error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="p-8 bg-white shadow-lg rounded-md text-center w-full max-w-md">
-        <h1 className="text-2xl font-bold mb-6 text-gray-800">Summary</h1>
-        <div className="text-left mb-6">
-          <pre className="p-4 bg-gray-100 rounded-md text-sm text-gray-700 overflow-x-auto">
-            {JSON.stringify(state, null, 2)}
-          </pre>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-bl from-gray-900 to-black p-6">
+      <div className="relative bg-white/10 shadow-2xl border border-gray-700 rounded-xl w-full max-w-3xl p-8 transition-transform hover:scale-[1.02]">
+        
+        {/* Header */}
+        <h1 className="text-4xl font-bold text-white text-center mb-6 drop-shadow-md">
+          Event Summary
+        </h1>
+
+        {/* Summary Card */}
+        <div className="bg-white/10 p-6 rounded-lg border border-gray-600 shadow-lg">
+          <h2 className="text-xl font-semibold text-white mb-4">Event Details</h2>
+          
+          <div className="grid grid-cols-2 gap-4 text-gray-200 text-sm">
+            <div><span className="font-medium">Title:</span> {state?.event?.title || "N/A"}</div>
+            <div><span className="font-medium">Date:</span> {state?.event?.date || "N/A"}</div>
+            <div><span className="font-medium">Venue:</span> {state?.event?.venue || "N/A"}</div>
+            <div><span className="font-medium">Type:</span> {state?.event?.eventType || "N/A"}</div>
+            <div><span className="font-medium">Price:</span> {state?.event?.price ? `$${state.event.price}` : "Free"}</div>
+            <div><span className="font-medium">Capacity:</span> {state?.event?.capacity || "N/A"}</div>
+            <div><span className="font-medium">Tickets Left:</span> {state?.event?.availableTickets || "N/A"}</div>
+            <div>
+              <span className="font-medium">Category:</span>{" "}
+              {Array.isArray(state?.event?.category) ? state.event.category.join(", ") : "N/A"}
+            </div>
+
+          </div>
+
+          {/* Description */}
+          <div className="mt-6">
+            <h3 className="text-lg font-semibold text-white mb-2">Description</h3>
+            <p className="text-gray-300 text-sm">{state?.event?.shortDescription || "No description available."}</p>
+          </div>
         </div>
-        <div className="flex justify-between">
+
+        {/* Buttons */}
+        <div className="flex justify-between mt-6">
           <button
             onClick={handleGoBack}
-            className="py-2 px-4 bg-gray-600 text-white rounded-md hover:bg-gray-700 transition"
+            className="w-1/2 py-3 flex items-center justify-center bg-gray-800 text-white font-medium rounded-lg hover:bg-gray-600 transition-all duration-300"
           >
-            Go Back
+            <FaArrowLeft className="mr-2" /> Go Back
           </button>
           <button
             onClick={handleSubmit}
-            className="py-2 px-4 bg-green-600 text-white rounded-md hover:bg-green-700 transition"
+            className={`w-1/2 py-3 flex items-center justify-center font-medium rounded-lg transition-all duration-300 ${
+              isLoading
+                ? "bg-green-400 cursor-not-allowed"
+                : "bg-green-600 hover:bg-green-500 text-white"
+            }`}
+            disabled={isLoading}
           >
-            Submit
+            {isLoading ? "Submitting..." : <><FaCheckCircle className="mr-2" /> Submit</>}
           </button>
         </div>
+
+        {/* Submission Progress Indicator */}
+        {isLoading && (
+          <div className="absolute inset-0 flex items-center justify-center bg-black/60 rounded-xl">
+            <div className="flex flex-col items-center">
+              <div className="w-8 h-8 border-4 border-green-500 border-t-transparent rounded-full animate-spin"></div>
+              <p className="text-white text-lg mt-3">Processing...</p>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

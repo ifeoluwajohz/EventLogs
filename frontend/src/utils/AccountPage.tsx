@@ -63,13 +63,14 @@ const AccountPage: React.FC = () => {
     }
   };
 
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-blue-500"></div>
+  {loading && (
+    <div className="absolute inset-0 flex items-center justify-center bg-black/60 rounded-xl">
+      <div className="flex flex-col items-center">
+        <div className="w-8 h-8 border-4 border-green-500 border-t-transparent rounded-full animate-spin"></div>
+        <p className="text-white text-lg mt-3">Processing...</p>
       </div>
-    );
-  }
+    </div>
+  )}
 
   return (
     <div className="w-full px-5 md:px-12 mt-10">
@@ -111,12 +112,11 @@ const AccountPage: React.FC = () => {
             >
               Switch to {userProfile?.role.toString() === "USER" ? "Admin" : "User"} Account
             </button>
-
-            <p
-              onClick={() => setEditMode(true)}
-              className="mt-4 text-blue-600 hover:text-blue-700 cursor-pointer"
-            >
-              Edit Your Profile
+              
+            <p className='my-4'>
+            <Link to="/profile" className="mt-4 text-blue-600 hover:text-blue-700 cursor-pointer">
+              View Your Profile
+            </Link>
             </p>
             {/* <p className="my-4">
             <Link 

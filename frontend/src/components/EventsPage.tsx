@@ -67,8 +67,11 @@ const EventsPage: React.FC = () => {
 
       {/* Loading State */}
       {loading ? (
-        <div className="flex justify-center items-center h-40">
-          <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+        <div className="absolute inset-0 flex items-center justify-center bg-black/60 rounded-xl">
+          <div className="flex flex-col items-center">
+            <div className="w-8 h-8 border-4 border-green-500 border-t-transparent rounded-full animate-spin"></div>
+            <p className="text-white text-lg mt-3">Processing...</p>
+          </div>
         </div>
       ) : currentEvents.length === 0 ? (
         <div className="text-center py-16">
