@@ -8,6 +8,7 @@ import { useAuth } from './context/AuthContext'
 
 import Home from "./pages/Home"
 import Navbar from "./components/Navbar"
+import FAQ from "./components/FAQ"
 
 import ProfilePage from './utils/ProfilePage'
 import AccountPage from './utils/AccountPage'
@@ -28,6 +29,8 @@ import TicketManagement from "./pages/TicketManagement"
 // import UpdateEventForm from "./config/UpdateEventForm"
 
 import EventDeatils from "./components/EventDetails"
+import Footer from './components/Footer'
+
 
 const App = () => {
   const { user } = useAuth();
@@ -38,6 +41,7 @@ const App = () => {
 
         <Routes>
           <Route path="/" element={<Home />}/>
+          <Route path="/faq" element={<FAQ />} />
         </Routes>
 
         <Routes>
@@ -65,6 +69,7 @@ const App = () => {
         <Route path="/attendee-questions" element={<AttendeeQuestionsPage />} />
         <Route path="/summary" element={<SummaryPage />} />
       </Routes>
+      <Footer />
 
     </>
   )

@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+import { FaRegCalendarTimes } from "react-icons/fa";
+
 import { useParams, Link } from "react-router-dom";
 
 interface Event {
@@ -56,11 +58,11 @@ const EventsPage: React.FC = () => {
   return (
     <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-12 bg-gray-50">
       {/* Page Header */}
-      <header className="text-center mb-12">
-        <h1 className="text-4xl font-extrabold text-gray-800">
+      <header className="text-center mb-12 mt-4">
+        <h1 className="text-3xl font-bold text-gray-800">
           Discover Events in <span className="text-blue-600">{location}</span>
         </h1>
-        <p className="mt-4 text-gray-600 text-lg">
+        <p className="mt-2 text-gray-600 text-sm">
           Find the best events curated just for you. Explore by date, venue, and type.
         </p>
       </header>
@@ -74,8 +76,11 @@ const EventsPage: React.FC = () => {
           </div>
         </div>
       ) : currentEvents.length === 0 ? (
-        <div className="text-center py-16">
-          <p className="text-xl text-gray-600">No events found in this location.</p>
+        <div className="absolute inset-0 flex items-center justify-center">
+        <div className=" text-center my-20 flex flex-col items-center">
+          <FaRegCalendarTimes className="text-4xl text-gray-400 mb-4" />
+          <p className="text-sm text-gray-600">No events found in this location.</p>
+        </div>
         </div>
       ) : (
         <>

@@ -9,9 +9,10 @@ export default {
 
 
     "./src/components/Navbar.tsx",
+    "./src/components/FAQ.tsx",
     "./src/components/Carousel.tsx",
     "./src/components/HeroSection.tsx",
-    "./src/components/HeroSection.tsx",
+    "./src/components/Partners.tsx",
     "./src/components/EventSearchByLocation.tsx",
     "./src/components/OrderButton.tsx",
     "./src/components/EventDetails.tsx",

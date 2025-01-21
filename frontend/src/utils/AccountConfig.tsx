@@ -1,13 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useAuth } from "../context/AuthContext";
-import { useNavigate } from "react-router-dom";
 
 const SignInComponent: React.FC = () => {
-  const { user, loading, signInWithGoogle, signInWithTwitter, signUp, signIn } = useAuth();
+  const { user, loading, error, signInWithGoogle, signInWithTwitter, signUp, signIn } = useAuth();
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [isSignUp, setIsSignUp] = useState<boolean>(false);
-  const navigate = useNavigate();
 
   const handleEmailAuth = async () => {
     try {
@@ -18,20 +16,21 @@ const SignInComponent: React.FC = () => {
       }
     } catch (error) {
       console.error("Authentication error:", error);
-      const errorMessage =
-        error instanceof Error ? error.message : "An unknown error occurred.";
-      alert(errorMessage);
+      
     }
   };
 
-  // Redirect to the questions page if the user is logged in
-  useEffect(() => {
-    if (user) {
-      navigate("/questions");
-    }
-  }, [user]);
 
-  if (loading) return <p>Loading...</p>;
+  {loading && (
+    <div className="absolute inset-0 flex items-center justify-center bg-black/60 rounded-xl">
+      <div className="flex flex-col items-center">
+        <div className="w-8 h-8 border-4 border-green-500 border-t-transparent rounded-full animate-spin"></div>
+        <p className="text-white text-lg mt-3">Processing...</p>
+      </div>
+    </div>
+  )}
+  if (error) return <p className="text-red-500">{error}</p>;
+
 
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center">

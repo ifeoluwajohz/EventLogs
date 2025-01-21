@@ -18,6 +18,7 @@ interface AuthContextProps {
   user: User | null;
   userProfile: UserProfile | null;
   loading: boolean;
+  error: string | null;
   role: Role | string;
   setRole: React.Dispatch<React.SetStateAction<Role | string>>;
   switchRole: () => Promise<void>;
@@ -47,6 +48,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [role, setRole] = useState<Role | string>({ role: "user" });
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
   const token = localStorage.getItem("jwt");
 
@@ -68,12 +70,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, [navigate]);
 
   const fetchUserProfile = async (): Promise<void> => {
+    setLoading(true);
+    setError(null);
     try {
       if (!token) {
         setUser(null);
         return;
       }
-
       const response = await fetch(`${API_URL}/user/getUser`, {
         method: "GET",
         // credentials: 'include',
@@ -82,22 +85,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           "Content-Type": "application/json",
         },
       });
-
-      // if (!response.ok) {
-      //   localStorage.removeItem('jwt')
-      //   console.log("jwt is wrong")
-      //   // throw new Error("Failed to fetch profile");
-      // }
-
       const data = await response.json();
       // console.log(data)
       setUserProfile(data.user);
     } catch (error) {
-      console.error("Error fetching profile:", error);
+      setError((error as Error).message);
+    }finally {
+      setLoading(false);
     }
   };
 
   const updateUserProfile = async (updates: Partial<UserProfile>): Promise<void> => {
+    setLoading(true);
+    setError(null);
     try {
       const response = await fetch(`${API_URL}/user/updateUser/${userProfile?.id}`, {
         method: "PUT",
@@ -116,18 +116,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setUserProfile(data.data); // Update the user profile in the context
       // console.log("User profile updated successfully", data);
     } catch (error) {
-      if (error instanceof Error) {
-        console.log(error.message); // Safely access the error message
-      } else {
-        console.log("An unknown error occurred:", error);
-      }
+      setError((error as Error).message);
+    }finally {
+      setLoading(false);
     }
-    
   };
   
   
 
   const switchRole = async (): Promise<void> => {
+    setLoading(true);
+    setError(null);
     try{
       const response = await fetch(`${API_URL}/user/switchRole`, {
         method: "PUT",
@@ -145,47 +144,58 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       fetchUserProfile()
       // setUserProfile(data.user);
     }catch (error) {
-      if (error instanceof Error) {
-        console.log(error.message); // Safely access the error message
-      } else {
-        console.log("An unknown error occurred:", error);
-      }
+      setError((error as Error).message);
+    }finally {
+      setLoading(false);
     }
-    
   }
 
   const signUp = async (email: string, password: string): Promise<void> => {
+    setLoading(true);
+    setError(null);
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const idToken = await getIdToken(userCredential.user);
       await sendAuthRequestToBackend(`${API_URL}/user/register`, idToken);
     } catch (error) {
-      console.error("Error during signup:", error);
+      setError((error as Error).message);
+    }finally {
+      setLoading(false);
     }
   };
 
   const signIn = async (email: string, password: string): Promise<void> => {
+    setLoading(true);
+    setError(null);
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       const idToken = await getIdToken(userCredential.user);
       await sendAuthRequestToBackend(`${API_URL}/user/loginUser`, idToken);
     } catch (error) {
-      console.error("Error during sign-in:", error);
+      setError((error as Error).message);
+    }finally {
+      setLoading(false);
     }
   };
 
   const signInWithGoogle = async (): Promise<void> => {
+    setLoading(true);
+    setError(null);
     try {
       const provider = new GoogleAuthProvider();
       const userCredential = await signInWithPopup(auth, provider);
       const idToken = await getIdToken(userCredential.user);
       await sendAuthRequestToBackend(`${API_URL}/user/loginUser`, idToken);
     } catch (error) {
-      console.error("Google Sign-In Error:", error);
+      setError((error as Error).message);
+    }finally {
+      setLoading(false);
     }
   };
 
   const signOut = async (): Promise<void> => {
+    setLoading(true);
+    setError(null);
     try {
       await firebaseSignOut(auth);
       localStorage.removeItem("jwt");
@@ -193,11 +203,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setUserProfile(null);
       navigate("/");
     } catch (error) {
-      console.error("Error signing out:", error);
+      setError((error as Error).message);
+    }finally {
+      setLoading(false);
     }
   };
 
   const sendAuthRequestToBackend = async (url: string, idToken: string) => {
+    setLoading(true)
+    setError(null)
     try {
       const response = await fetch(url, {
         method: "POST",
@@ -214,7 +228,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setUserProfile(data.user);
       navigate("/accountConfig");
     } catch (error) {
-      console.error("Error sending auth request:", error);
+      setError((error as Error).message);
+    }finally {
+      setLoading(false);
     }
   };
 
@@ -224,6 +240,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         user,
         userProfile,
         loading,
+        error,
         role,
         setRole,
         switchRole,

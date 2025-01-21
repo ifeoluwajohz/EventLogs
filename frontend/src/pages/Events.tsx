@@ -28,7 +28,8 @@ const Events: React.FC = () => {
 
   const fetchBookings = async () => {
     if (!userProfile?.id) return;
-
+    setLoading(true);
+    setError(null);
     try {
       const response = await fetch(
         `${API_URL}/event/${userProfile.id}/bookedAll`,
@@ -48,16 +49,16 @@ const Events: React.FC = () => {
       const data = await response.json();
       setBookings(data);
     } catch (error) {
-      console.error(error);
-      setError(error instanceof Error ? error.message : "An error occurred.");
-    } finally {
+      setError((error as Error).message);
+    }finally {
       setLoading(false);
     }
   };
 
   const deleteAllBookings = async () => {
     if (!userProfile?.id) return;
-
+    setLoading(true);
+    setError(null);
     const confirmed = window.confirm("Are you sure you want to delete all bookings?");
     if (!confirmed) return;
 
@@ -71,17 +72,12 @@ const Events: React.FC = () => {
           },
         }
       );
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || "Failed to delete bookings");
-      }
-
+      console.log(response)
       setBookings([]); // Clear the events after successful deletion
-      alert("All bookings have been deleted.");
     } catch (error) {
-      console.error(error);
-      alert(error instanceof Error ? error.message : "An error occurred.");
+      setError((error as Error).message);
+    }finally {
+      setLoading(false);
     }
   };
 

@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom'
 
 const Navbar: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
+  // const navigate = 
 
   return (
     <nav className="w-full bg-white shadow-md">
@@ -37,13 +38,13 @@ const Navbar: React.FC = () => {
         <div className="hidden md:flex gap-6 items-center">
           {["Top cities", "Become a Partner", "FAQ", "Review", "Blog"].map(
             (link) => (
-              <a
+              <Link
                 key={link}
-                href="#"
+                to={`/${link}`}
                 className="text-gray-600 hover:text-gray-800 transition-colors"
               >
                 {link}
-              </a>
+              </Link>
             )
           )}
         </div>
@@ -76,16 +77,16 @@ const Navbar: React.FC = () => {
         <div className="flex flex-col gap-4 p-6">
           {["Top cities", "Become a Partner", "FAQ", "Review", "Blog"].map(
             (link) => (
-              <a
+              <Link
                 key={link}
-                href="#"
+                to={`/${link}`}
                 onClick={() => {
                   setIsMenuOpen(false);
                 }}
                 className="text-gray-600 hover:text-gray-800 transition-colors"
               >
                 {link}
-              </a>
+              </Link>
             )
           )}
           <div className="mt-4 flex flex-col gap-4">
