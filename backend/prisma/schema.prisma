@@ -9,59 +9,59 @@ datasource db {
 
 // Your Prisma models are well structured. The only changes are logic for role switching.
 model User {
-  id          String        @id @default(cuid())
-  firebaseUid String        @unique
-  email       String?       @unique
-  prefferedName String?     @unique
-  profilePicture String
-  location    String?
-  name        String?
-  phone       String?
-  role        Role          @default(USER)
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
-  bookings    Booking[]     // One-to-many relation with Booking
-  tickets     Ticket[]      // One-to-many relation with Ticket
-  reviews     EventReview[] // One-to-many relation with EventReview
-  admin       Admin?        @relation("UserToAdmin") // User may or may not be an Admin
+  id        String   @id @default(cuid())
+  ClerkId   String   @unique
+  Email     String?  @unique
+  Fullname  String?
+  Username  String?  @unique
+  phone     String?
+  // profilePicture String?
+  location  String?
+  role      Role     @default(USER)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  bookings Booking[] // One-to-many relation with Booking
+  tickets  Ticket[] // One-to-many relation with Ticket
+  reviews  EventReview[] // One-to-many relation with EventReview
+  admin    Admin?        @relation("UserToAdmin") // User may or may not be an Admin
 }
 
 model Admin {
-  userId      String   @id // Primary key, references User
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id        String   @id // Primary key, references User
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  events      Event[] // One-to-many relation with Event
-  user        User     @relation("UserToAdmin", fields: [userId], references: [id]) // Relation to User
+  events Event[] // One-to-many relation with Event
+  admin  User    @relation("UserToAdmin", fields: [id], references: [id]) // Relation to User
 }
 
-
-
 model Event {
-  id               String         @id @unique @default(cuid())
+  id               String    @id @unique @default(cuid())
   title            String
-  shortDescription String
-  longDescription  String
+  preview          String
+  description      String
   date             DateTime
   venue            String
-  eventType        EventType
   price            Float? // Null for free events
-  capacity         Int
-  availableTickets Int
-  pictureId        String?
-  adminId          String         // Rename to match Admin model
-  bookings         Booking[]      // One-to-many relation with Booking
-  reviews          EventReview[]  // One-to-many relation with EventReview
-  discountCodes    DiscountCode[] // One-to-many relation with DiscountCode
-  tickets          Ticket[]       // One-to-many relation with Ticket
-  createdAt        DateTime       @default(now())
-  updatedAt        DateTime       @updatedAt
+  capacity         Int?
+  availableTickets Int?
+  ImageId          String?
+  AdminId          String // Rename to match Admin model
+  eventType        EventType
 
-  picture          Picture?        @relation(fields: [pictureId], references: [id])
-  admin            Admin @relation(fields: [adminId], references: [userId])
-  categories       EventCategory[]
+  bookings      Booking[] // One-to-many relation with Booking
+  reviews       EventReview[] // One-to-many relation with EventReview
+  discountCodes DiscountCode[] // One-to-many relation with DiscountCode
+  tickets       Ticket[] // One-to-many relation with Ticket
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
 
-  @@index([adminId, title, date, venue, shortDescription]) // Useful composite index
+  image      EventImages?    @relation(fields: [ImageId], references: [id])
+  admin      Admin           @relation(fields: [AdminId], references: [id])
+  categories EventCategory[]
+
+  @@index([AdminId, title, date, venue, description]) // Useful composite index
 }
 
 model EventReview {
@@ -77,7 +77,7 @@ model EventReview {
   user  User  @relation(fields: [userId], references: [id]) // Ensure userId references the correct field in User model
 }
 
-model Picture {
+model EventImages {
   id              String   @id @unique @default(cuid())
   displayPicture  String
   previewPictures String[]
@@ -85,30 +85,30 @@ model Picture {
 }
 
 model Booking {
-  id                String        @id @default(cuid())
-  userId            String
-  eventId           String
-  bookingDate       DateTime      @default(now())
-  quantity          Int
-  totalAmount       Float
-  status            BookingStatus @default(PENDING)
-  isActive          Boolean       @default(false)
-  cancellationReason String?      // For cancellations
-  refundStatus      String?       // e.g., refunded, processing, etc.
-  ticket            Ticket[]      // Clarify relationship
-  user              User          @relation(fields: [userId], references: [id])
-  event             Event         @relation(fields: [eventId], references: [id])
-  payment           Payment[]
+  id                 String        @id @default(cuid())
+  userId             String
+  eventId            String
+  bookingDate        DateTime      @default(now())
+  quantity           Int
+  totalAmount        Float
+  status             BookingStatus @default(PENDING)
+  isActive           Boolean       @default(false)
+  cancellationReason String? // For cancellations
+  refundStatus       String? // e.g., refunded, processing, etc.
+  ticket             Ticket[] // Clarify relationship
+  user               User          @relation(fields: [userId], references: [id])
+  event              Event         @relation(fields: [eventId], references: [id])
+  payment            Payment[]
 
-  @@index([userId, eventId])
+  @@index([userId, eventId, status])
 }
 
 model Category {
   id     String          @id @default(cuid())
   name   String          @unique
   events EventCategory[]
-  @@index([name]) // Useful composite index
 
+  @@index([name]) // Useful composite index
 }
 
 model EventCategory {

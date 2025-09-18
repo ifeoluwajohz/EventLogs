@@ -1,22 +1,23 @@
 import React, { useState } from "react";
-import { useAuth } from "../context/AuthContext";
 import { motion } from "framer-motion";
 import { FaEdit, FaSave, FaCamera } from "react-icons/fa";
+import { useUser } from "@clerk/clerk-react";
 
 const ProfilePage: React.FC = () => {
-  const { userProfile, updateUserProfile, user } = useAuth();
+  // const { userProfile, updateUserProfile, user } = useAuth();
+  const {user} = useUser();
   const [editMode, setEditMode] = useState(false);
   const [formData, setFormData] = useState({
-    preferredName: userProfile?.prefferedName || "Your Name",
-    handle: userProfile?.handle || "@username",
-    bio: userProfile?.bio || "Add a short bio...",
-    location: userProfile?.location || "Location",
-    profilePicture: userProfile?.profilePicture || "/default-avatar.png",
-    coverPhoto: userProfile?.coverPhoto || "/default-cover.jpg",
-    email: userProfile?.email || "Email",
+    // preferredName: userProfile?.prefferedName || "Your Name",
+    // handle: userProfile?.handle || "@username",
+    // bio: userProfile?.bio || "Add a short bio...",
+    // location: userProfile?.location || "Location",
+    // profilePicture: userProfile?.profilePicture || "/default-avatar.png",
+    // coverPhoto: userProfile?.coverPhoto || "/default-cover.jpg",
+    // email: userProfile?.email || "Email",
   });
 
-  if (!userProfile) {
+  if (!user) {
     return (
       <div className="flex justify-center items-center h-screen bg-gray-100">
         <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-blue-500"></div>
@@ -29,7 +30,7 @@ const ProfilePage: React.FC = () => {
   };
 
   const handleSave = () => {
-    updateUserProfile(formData); // Update profile logic here
+    // updateUserProfile(formData); // Update profile logic here
     setEditMode(false);
   };
 
@@ -38,12 +39,12 @@ const ProfilePage: React.FC = () => {
       {/* Cover Photo (Jumbotron Style) */}
       <div className="relative w-full h-[40vh]">
         <img
-          src={formData.coverPhoto}
+          // src={formData.coverPhoto}
           alt="Cover"
           className="w-full h-full object-cover brightness-75"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-gray-900 to-transparent"></div>
-        {user?.uid === userProfile.firebaseUid && (
+        {user?.id  && (
           <button
             onClick={() => setEditMode(!editMode)}
             className="absolute right-4 top-4 underline text-white p-2 rounded-full shadow-md hover:text-blue-400 focus:outline-none"
@@ -79,7 +80,7 @@ const ProfilePage: React.FC = () => {
         <div className="relative">
           {/* Profile Picture */}
           <motion.img
-            src={formData.profilePicture}
+            // src={formData.profilePicture}
             alt="Profile"
             className="w-32 h-32 rounded-full border-4 shadow-lg mx-auto"
             whileHover={{ scale: 1.05 }}
@@ -108,20 +109,20 @@ const ProfilePage: React.FC = () => {
               <input
                 type="text"
                 name="preferredName"
-                value={formData.preferredName}
+                // value={formData.preferredName}
                 onChange={handleInputChange}
                 className="text-3xl font-bold text-gray-900 border-b-2 border-gray-300 focus:outline-none mb-2 w-full text-center"
               />
               <input
                 type="text"
                 name="handle"
-                value={formData.handle}
+                // value={formData.handle}
                 onChange={handleInputChange}
                 className="text-lg text-gray-500 mb-2 w-full text-center"
               />
               <textarea
                 name="bio"
-                value={formData.bio}
+                // value={formData.bio}
                 onChange={handleInputChange}
                 className="w-full text-gray-700 mt-4 border-b-2 border-gray-300 p-2 resize-none"
                 rows={3}
@@ -129,15 +130,15 @@ const ProfilePage: React.FC = () => {
               <input
                 type="text"
                 name="location"
-                value={formData.location}
+                // value={formData.location}
                 onChange={handleInputChange}
                 className="w-full text-gray-500 mt-2 border-b-2 border-gray-300 p-2"
-                disabled={user?.uid !== userProfile.id}
+                // disabled={user?.uid !== userProfile.id}
               />
               <input
                 type="email"
                 name="email"
-                value={formData.email}
+                // value={formData.email}
                 onChange={handleInputChange}
                 className="w-full text-gray-500 mt-2 border-b-2 border-gray-300 p-2"
                 disabled={true}
@@ -145,18 +146,18 @@ const ProfilePage: React.FC = () => {
             </>
           ) : (
             <>
-              <h2 className="text-3xl font-bold">{formData.preferredName}</h2>
-              <p className="text-gray-500">{formData.handle}</p>
+              {/* <h2 className="text-3xl font-bold">{formData.preferredName}</h2> */}
+              {/* <p className="text-gray-500">{formData.handle}</p>
               <p className="text-gray-700 mt-2">{formData.bio}</p>
               <p className="text-gray-600 mt-1">{formData.location}</p>
-              <p className="text-gray-400 mt-1">{formData.email}</p>
+              <p className="text-gray-400 mt-1">{formData.email}</p> */}
             </>
           )}
         </div>
 
         {/* Save or Edit Button */}
         <div className="flex justify-center mt-4">
-          {user?.uid === userProfile.id && (
+          {/* {user?.uid === userProfile.id && (
             <button
               onClick={editMode ? handleSave : () => setEditMode(true)}
               className={`${
@@ -165,7 +166,7 @@ const ProfilePage: React.FC = () => {
             >
               {editMode ? <FaSave /> : <FaEdit />}
             </button>
-          )}
+          )} */}
         </div>
       </motion.div>
 

@@ -36,7 +36,7 @@ const EventDetails: React.FC = () => {
     if (!event) return;
 
     const eventTime = new Date(event.date).getTime();
-    
+
     const updateCountdown = () => {
       const now = new Date().getTime();
       const timeDiff = eventTime - now;
@@ -47,7 +47,9 @@ const EventDetails: React.FC = () => {
       }
 
       const days = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
-      const hours = Math.floor((timeDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const hours = Math.floor(
+        (timeDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+      );
       const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
       const seconds = Math.floor((timeDiff % (1000 * 60)) / 1000);
 
@@ -85,24 +87,33 @@ const EventDetails: React.FC = () => {
     }
   };
 
-  {loading && (
-    <div className="absolute inset-0 flex items-center justify-center bg-black/60 rounded-xl">
-      <div className="flex flex-col items-center">
-        <div className="w-8 h-8 border-4 border-green-500 border-t-transparent rounded-full animate-spin"></div>
-        <p className="text-white text-lg mt-3">Processing...</p>
+  {
+    loading && (
+      <div className="absolute inset-0 flex items-center justify-center bg-black/60 rounded-xl">
+        <div className="flex flex-col items-center">
+          <div className="w-8 h-8 border-4 border-green-500 border-t-transparent rounded-full animate-spin"></div>
+          <p className="text-white text-lg mt-3">Processing...</p>
+        </div>
       </div>
-    </div>
-  )}
+    );
+  }
   if (error) return <p className="text-red-500">{error}</p>;
   if (!event) return <p>Event not found</p>;
 
   return (
     <div className="p-6 md:p-10 bg-white shadow-lg rounded-sm">
-      <div className="w-full h-64 md:h-96 bg-cover bg-center rounded-md mb-6" style={{ backgroundImage: `url(${event.image})` }}></div>
+      <div
+        className="w-full h-64 md:h-96 bg-cover bg-center rounded-md mb-6"
+        style={{ backgroundImage: `url(${event.image})` }}
+      ></div>
 
       <div className="mb-8">
-        <h1 className="text-3xl md:text-4xl font-bold text-gray-800">{event.title}</h1>
-        <p className="text-sm text-gray-500 my-3">Price: {event.price || "Free Entry"}</p>
+        <h1 className="text-3xl md:text-4xl font-bold text-gray-800">
+          {event.title}
+        </h1>
+        <p className="text-sm text-gray-500 my-3">
+          Price: {event.price || "Free Entry"}
+        </p>
 
         <div className="bg-blue-100 text-blue-800 p-3 rounded-md mb-4">
           <p className="text-sm font-base mb-2">Countdown to Event:</p>
@@ -111,22 +122,41 @@ const EventDetails: React.FC = () => {
 
         <div className="flex items-center space-x-4 text-sm text-gray-600 mb-4">
           <div className="flex items-center space-x-2">
-            <img className="w-5 h-5" src="https://img.icons8.com/ios/50/calendar--v1.png" alt="calendar icon" />
+            <img
+              className="w-5 h-5"
+              src="https://img.icons8.com/ios/50/calendar--v1.png"
+              alt="calendar icon"
+            />
             <p>{new Date(event.date).toDateString()}</p>
           </div>
           <div className="flex items-center space-x-2">
-            <img className="w-5 h-5" src="https://img.icons8.com/carbon-copy/100/ticket.png" alt="ticket icon" />
-            <p>{event.availableTickets > 0 ? `Available Tickets: ${event.availableTickets}` : <span className="text-red-500 font-semibold">Sold Out</span>}</p>
+            <img
+              className="w-5 h-5"
+              src="https://img.icons8.com/carbon-copy/100/ticket.png"
+              alt="ticket icon"
+            />
+            <p>
+              {event.availableTickets > 0 ? (
+                `Available Tickets: ${event.availableTickets}`
+              ) : (
+                <span className="text-red-500 font-semibold">Sold Out</span>
+              )}
+            </p>
           </div>
         </div>
 
         <div className="mb-6">
-          <p className="text-lg font-semibold text-gray-800 mb-2">Description:</p>
+          <p className="text-lg font-semibold text-gray-800 mb-2">
+            Description:
+          </p>
           <p className="text-gray-700">{event.longDescription}</p>
         </div>
 
         <div className="mb-6">
-          <Link to={`/user/userInfo/${event.adminId}`} className="text-blue-500 underline">
+          <Link
+            to={`/user/userInfo/${event.adminId}`}
+            className="text-blue-500 underline"
+          >
             About The Organizer
           </Link>
         </div>
@@ -135,7 +165,11 @@ const EventDetails: React.FC = () => {
       <button
         onClick={handleShare}
         className={`relative flex items-center gap-2 px-4 py-2 rounded-md mb-4 transition 
-          ${sharing ? "bg-gray-400 cursor-not-allowed" : "bg-blue-500 hover:bg-blue-600 text-white"}`}
+          ${
+            sharing
+              ? "bg-gray-400 cursor-not-allowed"
+              : "bg-blue-500 hover:bg-blue-600 text-white"
+          }`}
         disabled={sharing}
       >
         <FiShare2 className="w-5 h-5" />
@@ -143,9 +177,9 @@ const EventDetails: React.FC = () => {
         {copied && (
           <span className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-10 bg-gray-900 text-white text-xs px-2 py-1 rounded-md">
             Link Copied!
-    </span>
-  )}
-</button>
+          </span>
+        )}
+      </button>
 
       <OrderButton event={event} />
     </div>

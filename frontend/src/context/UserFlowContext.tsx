@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
-import { useAuth } from "./AuthContext"; // Adjust the path as needed
+// import { useAuth } from "./AuthContext"; // Adjust the path as needed
 import { useNavigate } from "react-router-dom"
 const API_URL = import.meta.env.VITE_REACT_APP_API_KEY;
 
@@ -42,7 +42,7 @@ const UserFlowContext = createContext<UserFlowContextProps | undefined>(
 );
 
 export const UserFlowProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { userProfile } = useAuth();
+  // const { userProfile } = useAuth();
   const [state, setState] = useState<UserFlowState>(initialState);
   const navigate = useNavigate();
 
@@ -63,16 +63,16 @@ export const UserFlowProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     }
   
     // Sync data from AuthContext
-    if (userProfile) {
-      setState((prev) => ({
-        ...prev,
-        role: typeof userProfile.role === 'string' ? userProfile.role : null,
-        preferredName: userProfile.name || null,
-        location: userProfile.location || null,
-      }));
-    }
+    // if (userProfile) {
+    //   setState((prev) => ({
+    //     ...prev,
+    //     role: typeof userProfile.role === 'string' ? userProfile.role : null,
+    //     preferredName: userProfile.name || null,
+    //     location: userProfile.location || null,
+    //   }));
+    // }
     
-  }, [userProfile]);
+  }, []);
   
 
   const setIdToken = (idToken: string) => setState((prev) => ({ ...prev, idToken }));

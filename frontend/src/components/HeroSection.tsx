@@ -1,4 +1,4 @@
-import React, {useEffect} from "react";
+import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useEvent } from "../context/EventContext";
 
@@ -15,25 +15,29 @@ const HeroSection: React.FC = () => {
 
   useEffect(() => {
     // const handleSearch = () => {
-      if (location.trim() >= "") {
-        fetchEventsByLocation(location);
-      }
-      
+    if (location.trim() >= "") {
+      fetchEventsByLocation(location);
+    }
+
     // };
-  }, [location])
+  }, [location]);
 
   return (
-    <div className="h-full py-8 mb-10 flex flex-col items-center px-4">
+    <div className="h-full py-8 mb-10  mt-10 flex flex-col items-center px-4">
       <div className="text-center mt-10 md:mt-20">
-        <h2 className="text-4xl md:text-5xl font-bold text-gray-800">
-          Find and Book Events Near You
-        </h2>
-        <p className="text-gray-600 mt-4 md:text-base text-sm">
-          Discover amazing events in your city! Instantly book tickets for
-          concerts, workshops, and more, and create unforgettable memories.
-        </p>
 
-        <div className="flex flex-col md:flex-row mt-6 gap-4 justify-center items-center">
+        <div className="flex flex-col gap-y-1.5">
+          <p className="text-sm text-gray-500">Event booking at its peak !!!</p>
+          <h2 className="text-4xl md:text-5xl font-bold text-gray-800">
+            Find and Book Events Near You
+          </h2>
+          <p className="text-gray-600 md:text-base text-sm mt-2">
+            Discover amazing events in your city! Instantly book tickets for
+            concerts, workshops, and more, and create unforgettable memories.
+          </p>
+        </div>
+
+        <div className="flex flex-col md:flex-row mt-4 gap-2 justify-center items-center">
           <input
             type="text"
             value={location}
@@ -50,7 +54,10 @@ const HeroSection: React.FC = () => {
         </div>
 
         <div className="mt-4">
-          <button onClick={fetchCurrentLocation} className="text-blue-600 hover:underline">
+          <button
+            onClick={fetchCurrentLocation}
+            className="text-blue-600 hover:underline"
+          >
             📍 Near me
           </button>
         </div>

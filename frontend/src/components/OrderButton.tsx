@@ -1,14 +1,15 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Event } from "../types/Event";
-import { useAuth } from "../context/AuthContext";
+import { useUser } from "@clerk/clerk-react"
+
 
 interface OrderButtonProps {
   event: Event;
 }
 
 const OrderButton: React.FC<OrderButtonProps> = ({ event }) => {
-  const { userProfile } = useAuth();
+  const { user } = useUser();
   const [quantity, setQuantity] = useState(1);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
@@ -37,7 +38,7 @@ const OrderButton: React.FC<OrderButtonProps> = ({ event }) => {
             Authorization: `Bearer ${jwt}`,
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ userId: userProfile?.id, quantity }),
+          body: JSON.stringify({ userId: user?.id, quantity }),
         });
 
         const data = await response.json();

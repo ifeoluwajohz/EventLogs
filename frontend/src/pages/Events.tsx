@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useAuth } from "../context/AuthContext";
+import { useUser } from "@clerk/clerk-react"
 import { useNavigate } from "react-router-dom";
 const API_URL = import.meta.env.VITE_REACT_APP_API_KEY;
 
@@ -20,19 +20,19 @@ interface Event {
 }
 
 const Events: React.FC = () => {
-  const { userProfile } = useAuth();
+  const { user } = useUser();
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 
   const fetchBookings = async () => {
-    if (!userProfile?.id) return;
+    if (!user?.id) return;
     setLoading(true);
     setError(null);
     try {
       const response = await fetch(
-        `${API_URL}/event/${userProfile.id}/bookedAll`,
+        `${API_URL}/event/${user.id}/bookedAll`,
         {
           method: "GET",
           headers: {
@@ -56,7 +56,7 @@ const Events: React.FC = () => {
   };
 
   const deleteAllBookings = async () => {
-    if (!userProfile?.id) return;
+    if (!user?.id) return;
     setLoading(true);
     setError(null);
     const confirmed = window.confirm("Are you sure you want to delete all bookings?");
@@ -64,7 +64,7 @@ const Events: React.FC = () => {
 
     try {
       const response = await fetch(
-        `${API_URL}/event/${userProfile.id}/bookedDelete`,
+        `${API_URL}/event/${user.id}/bookedDelete`,
         {
           method: "DELETE",
           headers: {
@@ -83,7 +83,7 @@ const Events: React.FC = () => {
 
   useEffect(() => {
     fetchBookings();
-  }, [userProfile]);
+  }, [user]);
 
   {loading && (
     <div className="absolute inset-0 flex items-center justify-center bg-black/60 rounded-xl">

@@ -6,14 +6,14 @@ interface Event {
   title: string;
   shortDescription: string;
   longDescription: string;
-  date: string;
+  date: Date | string ;
   venue: string;
   eventType: "FREE" | "PAID";
   price?: number;
-  availableTickets: number;
-  capacity: number;
+  availableTickets?: number;
+  capacity?: number;
   admin: string;
-  pictureId: string;
+  pictureId: string[];
   categories: string[];
 }
 

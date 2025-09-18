@@ -1,18 +1,11 @@
 // import { useState } from "react"
 import { Route, Routes } from "react-router-dom"
-import { useAuth } from './context/AuthContext'
-// import { EventProvider } from './context/EventContext'
-// import { UserProfile } from "../types/userTypes";
-
-
 
 import Home from "./pages/Home"
 import Navbar from "./components/Navbar"
-import FAQ from "./components/FAQ"
 
 import ProfilePage from './utils/ProfilePage'
 import AccountPage from './utils/AccountPage'
-import AccountConfig from './utils/AccountConfig'
 
 import ExtraInfo from "./components/ExtraInfo"
 import RoleSelectionPage from "./components/RoleSelectionPage";
@@ -33,7 +26,6 @@ import Footer from './components/Footer'
 
 
 const App = () => {
-  const { user } = useAuth();
 
   return (
     <>
@@ -41,11 +33,9 @@ const App = () => {
 
         <Routes>
           <Route path="/" element={<Home />}/>
-          <Route path="/faq" element={<FAQ />} />
         </Routes>
 
         <Routes>
-          <Route path='/login' element={!user ? <AccountConfig /> : <Home/>} />
           <Route path='/accountconfig' element={ <AccountPage /> } />
           <Route path='/profile' element={<ProfilePage />} />
         </Routes>
