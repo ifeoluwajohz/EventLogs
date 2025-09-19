@@ -5,14 +5,15 @@ import {
     AccordionTrigger,
   } from "../components/ui/accordion"
   
-  export function AccordionDemo() {
+  export default function Faq() {
     return (
       <Accordion
         type="single"
         collapsible
-        className="w-full"
+        className="w-full p-5"
         defaultValue="item-1"
       >
+        <p className="text-4xl font-semibold underline py-5">Faq's</p>
         <AccordionItem value="item-1">
           <AccordionTrigger>Product Information</AccordionTrigger>
           <AccordionContent className="flex flex-col gap-4 text-balance">

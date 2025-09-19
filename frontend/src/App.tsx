@@ -1,56 +1,52 @@
 // import { useState } from "react"
-import { Route, Routes } from "react-router-dom"
+import { Route, Routes } from "react-router-dom";
 
-import Home from "./pages/Home"
-import Navbar from "./components/Navbar"
+import Home from "./pages/Home";
+import Faq from "./components/Faq";
+import Navbar from "./components/Navbar";
 
-import ProfilePage from './utils/ProfilePage'
-import AccountPage from './utils/AccountPage'
+import ProfilePage from "./utils/ProfilePage";
+import AccountPage from "./utils/AccountPage";
 
-import ExtraInfo from "./components/ExtraInfo"
+import ExtraInfo from "./components/ExtraInfo";
 import RoleSelectionPage from "./components/RoleSelectionPage";
 import AdminQuestionsPage from "./components/AdminQuestionPage";
 import AttendeeQuestionsPage from "./components/AttendeeQuestionsPage";
 import SummaryPage from "./components/SummaryPage";
 
-
-import EventsPage from "./components/EventsPage"
-import Events from "./pages/Events"
+import EventsPage from "./components/EventsPage";
+import Events from "./pages/Events";
 // import CreateEventForm from "./config/CreateEventForm"
-import TicketPage from "./pages/TicketPage"
-import TicketManagement from "./pages/TicketManagement"
+import TicketPage from "./pages/TicketPage";
+import TicketManagement from "./pages/TicketManagement";
 // import UpdateEventForm from "./config/UpdateEventForm"
 
-import EventDeatils from "./components/EventDetails"
-import Footer from './components/Footer'
-
+import EventDeatils from "./components/EventDetails";
+import Footer from "./components/Footer";
 
 const App = () => {
-
   return (
     <>
       <Navbar />
 
-        <Routes>
-          <Route path="/" element={<Home />}/>
-        </Routes>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/Faq" element={<Faq />} />
+      </Routes>
 
-        <Routes>
-          <Route path='/accountconfig' element={ <AccountPage /> } />
-          <Route path='/profile' element={<ProfilePage />} />
-        </Routes>
-        
-      {/* <EventProvider> */}
-        <Routes>
-          <Route path="/EventsPage/:location" element={ <EventsPage/> } />
+      <Routes>
+        <Route path="/accountconfig" element={<AccountPage />} />
+        <Route path="/profile" element={<ProfilePage />} />
+      </Routes>
 
-          <Route path="/event/:id" element={<EventDeatils />} />
-          <Route path="/events" element={ <Events />} />
-          <Route path="/ticket/:id" element={ <TicketPage />} />
-          <Route path="/tickets" element={<TicketManagement />} />
-        </Routes>
-      {/* </EventProvider> */}
+      <Routes>
+        <Route path="/EventsPage/:location" element={<EventsPage />} />
 
+        <Route path="/event/:id" element={<EventDeatils />} />
+        <Route path="/events" element={<Events />} />
+        <Route path="/ticket/:id" element={<TicketPage />} />
+        <Route path="/tickets" element={<TicketManagement />} />
+      </Routes>
 
       <Routes>
         <Route path="/extra_info" element={<ExtraInfo />} />
@@ -60,9 +56,8 @@ const App = () => {
         <Route path="/summary" element={<SummaryPage />} />
       </Routes>
       <Footer />
-
     </>
-  )
-}
+  );
+};
 
-export default App
+export default App;

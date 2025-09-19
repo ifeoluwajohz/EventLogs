@@ -47,7 +47,7 @@ const HeroSection: React.FC = () => {
           />
           <button
             // onClick={handleSearch}
-            className="bg-blue-600 text-white px-6 py-3 rounded-lg w-full md:w-auto hover:bg-blue-700"
+            className="bg-sky-800 text-white px-6 py-3 rounded-lg w-full md:w-auto hover:bg-sky-700"
           >
             Search
           </button>
